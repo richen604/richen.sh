@@ -9,8 +9,9 @@ const Help = () => {
       <p>Available commands:</p>
       <ul>
         <li>clear</li>
-        <li>Help</li>
-        <li>ls</li>
+        <li>echo</li>
+        <li>help</li>
+        <li>neofetch</li>
       </ul>
     </div>
   );

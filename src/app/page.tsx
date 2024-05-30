@@ -17,48 +17,39 @@ export default function Home() {
   return (
     <main className="text-xl font-mono flex flex-col p-10 h-screen">
       <span className="comment">// this is a comment </span>
-      <nav className="flex space-x-4 mb-4">
-        <a
-          onClick={() => push("help")}
-          className="focus:bg-[#ffffff1a] hover:bg-[#ffffff1a]"
-        >
-          home
-        </a>
-        <a href="#about" className="focus:bg-[#ffffff1a] hover:bg-[#ffffff1a]">
-          about
-        </a>
-        <a
-          href="#services"
-          className="focus:bg-[#ffffff1a] hover:bg-[#ffffff1a]"
-        >
-          services
-        </a>
-        <a
-          href="#contact"
-          className="focus:bg-[#ffffff1a] hover:bg-[#ffffff1a]"
-        >
-          contact
-        </a>
-        <button
-          onClick={() => commandRegistry.clear()}
-          className="self-end focus:bg-[#ffffff1a] hover:bg-[#ffffff1a]"
-          aria-label="Clear Display"
-        >
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            fill="none"
-            viewBox="0 0 24 24"
-            strokeWidth={1.5}
-            stroke="currentColor"
-            className="w-6 h-6"
+      <nav className="flex mb-4">
+        <div className="flex space-x-4">
+          <button className="focus:bg-[#ffffff1a] hover:bg-[#ffffff1a]">
+            projects
+          </button>
+          <button className="focus:bg-[#ffffff1a] hover:bg-[#ffffff1a]">
+            experience
+          </button>
+          <button
+            onClick={() => (window.location.href = "mailto:richard@richen.dev")}
+            className="focus:bg-[#ffffff1a] hover:bg-[#ffffff1a]"
           >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              d="M6 18L18 6M6 6l12 12"
-            />
-          </svg>
-        </button>
+            contact
+          </button>
+        </div>
+        <div className="flex space-x-4 ml-auto">
+          <button
+            onClick={() => {
+              commandRegistry.clear();
+              push("help");
+            }}
+            className="text-center w-6 h-6 focus:bg-[#ffffff1a] hover:bg-[#ffffff1a]"
+          >
+            ?
+          </button>
+          <button
+            onClick={() => commandRegistry.clear()}
+            className="text-center w-6 h-6 focus:bg-[#ffffff1a] hover:bg-[#ffffff1a]"
+            aria-label="Clear Display"
+          >
+            x
+          </button>
+        </div>
       </nav>
       <div>{display?.length > 0 ? display : null}</div>
       <div className="w-full h-10 p-2">
