@@ -1,8 +1,12 @@
 import type { Metadata } from "next";
 import { Source_Code_Pro } from "next/font/google";
 import "./globals.css";
+import { TerminalStoreProvider } from "./_store/TerminalStoreProvider";
 
 const source_code_pro = Source_Code_Pro({ subsets: ["latin"] });
+
+import React from "react";
+import ClientOnly from "./_store/ClientOnly";
 
 export const metadata: Metadata = {
   title: "richen:~ #",
@@ -16,7 +20,11 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={source_code_pro.className}>{children}</body>
+      <ClientOnly>
+        <body className={source_code_pro.className}>
+          <TerminalStoreProvider>{children}</TerminalStoreProvider>
+        </body>
+      </ClientOnly>
     </html>
   );
 }
