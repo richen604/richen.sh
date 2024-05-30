@@ -4,6 +4,8 @@ import { atom, createStore } from "jotai";
 import { atomWithStorage } from "jotai/utils";
 import Echo from "../_commands/echo";
 import Help from "../_commands/help";
+import Neofetch from "../_commands/neofetch";
+import { type BrowserInfo } from "../_commands/neofetch/handle";
 
 export const store = createStore();
 
@@ -28,5 +30,8 @@ const componentMap: Record<string, React.FunctionComponent<any>> = {
   help: () => <Help />,
   echo: (props: React.PropsWithChildren<{ message: string }>) => (
     <Echo message={props.message} />
+  ),
+  neofetch: (props: React.PropsWithChildren<{ browserInfo: BrowserInfo }>) => (
+    <Neofetch browserInfo={props.browserInfo} />
   ),
 };

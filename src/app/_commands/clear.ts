@@ -1,7 +1,7 @@
 import { type CommandParams } from ".";
 import { store, displayAtom } from "../_store/terminalAtoms";
 
-export const handleClear = ({ args, flags }: CommandParams) => {
+const handleClear = ({ args, flags }: CommandParams) => {
   if (flags && (flags["-h"] || flags["-help"])) {
     store.set(displayAtom, (prev) => [
       ...prev,
@@ -25,7 +25,4 @@ export const handleClear = ({ args, flags }: CommandParams) => {
   store.set(displayAtom, []);
 };
 
-export const clearFlags = {
-  "-h": handleClear,
-  "-help": handleClear,
-};
+export default handleClear;
