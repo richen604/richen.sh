@@ -2,9 +2,7 @@
 
 import React from "react";
 
-type Props = {};
-
-const Help = (props: Props) => {
+const Help = () => {
   return (
     <div>
       <p>Available commands:</p>

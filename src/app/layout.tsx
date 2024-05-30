@@ -20,11 +20,11 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <ClientOnly>
-        <body className={source_code_pro.className}>
+      <body className={source_code_pro.className}>
+        <ClientOnly>
           <TerminalStoreProvider>{children}</TerminalStoreProvider>
-        </body>
-      </ClientOnly>
+        </ClientOnly>
+      </body>
     </html>
   );
 }

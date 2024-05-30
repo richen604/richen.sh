@@ -1,7 +1,8 @@
 "use client";
 
-import { ReactNode } from "react";
+import { type ReactNode } from "react";
 import { Provider } from "jotai";
+import { store } from "./terminalAtoms";
 
 export interface TerminalStoreProviderProps {
   children: ReactNode;
@@ -10,5 +11,5 @@ export interface TerminalStoreProviderProps {
 export const TerminalStoreProvider = ({
   children,
 }: TerminalStoreProviderProps) => {
-  return <Provider>{children}</Provider>;
+  return <Provider store={store}>{children}</Provider>;
 };

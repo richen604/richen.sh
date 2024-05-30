@@ -1,15 +1,13 @@
 /* eslint-disable react/jsx-no-comment-textnodes */
 "use client";
 
-import { useAtom } from "jotai";
 import { useEffect, useRef } from "react";
-import { displayAtom, renderedDisplayAtom } from "./_store/terminalAtoms";
 import useCommands from "./_hooks/useCommands";
 import useTerminalDisplay from "./_hooks/useTerminalDisplay";
 
 export default function Home() {
-  const { display, push, clear } = useTerminalDisplay();
-  const { handleKeyDown } = useCommands();
+  const { display, push } = useTerminalDisplay();
+  const { handleKeyDown, commandRegistry } = useCommands();
   const inputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
@@ -42,7 +40,7 @@ export default function Home() {
           contact
         </a>
         <button
-          onClick={clear}
+          onClick={() => commandRegistry.clear()}
           className="self-end focus:bg-[#ffffff1a] hover:bg-[#ffffff1a]"
           aria-label="Clear Display"
         >

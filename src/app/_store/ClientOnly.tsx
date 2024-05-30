@@ -7,7 +7,7 @@ function ClientOnly({
   ...delegated
 }: {
   children: React.ReactNode;
-  [key: string]: any;
+  [key: string]: unknown;
 }) {
   const [hasMounted, setHasMounted] = React.useState(false);
   React.useEffect(() => {
