@@ -6,8 +6,8 @@ import useCommands from "./_hooks/useCommands";
 import useTerminalDisplay from "./_hooks/useTerminalDisplay";
 
 export default function Home() {
-  const { display, push } = useTerminalDisplay();
-  const { handleKeyDown, commandRegistry } = useCommands();
+  const { display, set, clear } = useTerminalDisplay();
+  const { handleKeyDown } = useCommands();
   const inputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
@@ -35,15 +35,14 @@ export default function Home() {
         <div className="flex space-x-4 ml-auto">
           <button
             onClick={() => {
-              commandRegistry.clear();
-              push("help");
+              set([{ componentKey: "help" }]);
             }}
             className="text-center w-6 h-6 focus:bg-[#ffffff1a] hover:bg-[#ffffff1a]"
           >
             ?
           </button>
           <button
-            onClick={() => commandRegistry.clear()}
+            onClick={() => clear()}
             className="text-center w-6 h-6 focus:bg-[#ffffff1a] hover:bg-[#ffffff1a]"
             aria-label="Clear Display"
           >

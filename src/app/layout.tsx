@@ -9,7 +9,7 @@ import React from "react";
 import ClientOnly from "./_store/ClientOnly";
 
 export const metadata: Metadata = {
-  title: "richen:~ #",
+  title: "richen.sh",
   description: "rm -rf /",
 };
 

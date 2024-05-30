@@ -2,7 +2,7 @@
 import type React from "react";
 import { useAtom } from "jotai";
 import { displayAtom } from "../_store/terminalAtoms";
-import commandRegistry from "../_commands";
+import commandRegistry, { type Commands } from "../_commands";
 
 const useCommands = () => {
   const [, setDisplay] = useAtom(displayAtom);
@@ -13,7 +13,7 @@ const useCommands = () => {
       const commandArgs = inputElement.value.trim().split(" ");
       const command = commandArgs[0];
       const { args, flags, all } = parseArgsAndFlags(commandArgs.slice(1));
-      handleCommand(command, args, flags, all);
+      handleCommand(command as Commands, args, flags, all);
       inputElement.value = "";
     }
   };
@@ -36,7 +36,7 @@ const useCommands = () => {
   };
 
   const handleCommand = (
-    command: string,
+    command: Commands,
     args: string[],
     flags: Record<string, boolean>,
     all: string[]

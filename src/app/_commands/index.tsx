@@ -10,12 +10,14 @@ export type CommandParams = {
   all?: string[];
 };
 
-const commandRegistry: Record<string, (params?: CommandParams) => void> = {
-  echo: (params) => handleEcho(params ?? {}),
-  clear: (params) => handleClear(params ?? {}),
+const commandRegistry = {
+  echo: (params?: CommandParams) => handleEcho(params ?? {}),
+  clear: (params?: CommandParams) => handleClear(params ?? {}),
   help: () => handleHelp(),
   neofetch: () => handleNeofetch(),
 };
+
+export type Commands = keyof typeof commandRegistry;
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const componentMap: Record<string, React.FunctionComponent<any>> = {
