@@ -1,12 +1,9 @@
 "use client";
 import React from "react";
+export { default as handleEcho } from "./handle";
 
-type Props = {
-  message: string;
-};
-
-const Echo = (props: Props) => {
-  return <div>{props.message}</div>;
+const Echo = ({ message }: { message: string }) => {
+  return <div>{message}</div>;
 };
 
 export default Echo;

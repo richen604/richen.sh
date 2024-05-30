@@ -1,6 +1,7 @@
 "use client";
 
 import React from "react";
+export { default as handleHelp } from "./handle";
 
 const Help = () => {
   return (

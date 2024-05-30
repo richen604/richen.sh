@@ -8,6 +8,7 @@ import safari from "@/public/safari.svg";
 import edge from "@/public/edge.svg";
 import opera from "@/public/opera.svg";
 import brave from "@/public/brave.svg";
+export { default as handleNeofetch } from "./handle";
 
 const handleBrowserSvg = (browser: string | undefined) => {
   switch (browser) {
