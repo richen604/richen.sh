@@ -17,7 +17,6 @@ export const displayAtom = atomWithStorage<string[]>("terminal-display", [
   JSON.stringify({
     componentKey: "help",
     props: {},
-    time: new Date().toISOString(),
   }),
 ]);
 
