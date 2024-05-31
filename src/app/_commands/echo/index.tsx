@@ -1,4 +1,3 @@
-"use client";
 import React from "react";
 export { default as handleEcho } from "./handle";
 

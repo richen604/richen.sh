@@ -1,5 +1,3 @@
-"use client";
-
 import { displayAtom, store } from "@/app/_store/terminalAtoms";
 import UAParser from "ua-parser-js";
 

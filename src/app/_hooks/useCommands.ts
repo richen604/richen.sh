@@ -1,4 +1,3 @@
-"use client";
 import type React from "react";
 import { useAtom } from "jotai";
 import { type DisplayItem, displayAtom } from "../_store/terminalAtoms";
