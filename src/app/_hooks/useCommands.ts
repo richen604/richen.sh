@@ -1,20 +1,37 @@
 "use client";
 import type React from "react";
 import { useAtom } from "jotai";
-import { displayAtom } from "../_store/terminalAtoms";
+import { type DisplayItem, displayAtom } from "../_store/terminalAtoms";
 import commandRegistry, { type Commands } from "../_commands";
+import { useState } from "react";
 
 const useCommands = () => {
-  const [, setDisplay] = useAtom(displayAtom);
+  const [display, setDisplay] = useAtom(displayAtom);
+  const commandHistory = display.map((item) => {
+    const parsedItem = JSON.parse(item) as DisplayItem;
+    return parsedItem.componentKey;
+  });
+  const [historyIndex, setHistoryIndex] = useState<number>(-1);
 
   const handleKeyDown = (event: React.KeyboardEvent) => {
+    const inputElement = event.target as HTMLInputElement;
+
     if (event.key === "Enter") {
-      const inputElement = event.target as HTMLInputElement;
       const commandArgs = inputElement.value.trim().split(" ");
       const command = commandArgs[0];
       const { args, flags, all } = parseArgsAndFlags(commandArgs.slice(1));
       handleCommand(command as Commands, args, flags, all);
+      setHistoryIndex(-1);
       inputElement.value = "";
+    } else if (event.key === "ArrowUp") {
+      if (commandHistory.length > 0) {
+        const newIndex =
+          historyIndex < 0
+            ? commandHistory.length - 1
+            : Math.max(historyIndex - 1, 0);
+        setHistoryIndex(newIndex);
+        inputElement.value = commandHistory[newIndex];
+      }
     }
   };
 
@@ -54,8 +71,9 @@ const useCommands = () => {
     setDisplay((prev) => [
       ...prev,
       JSON.stringify({
-        componentKey: "echo",
-        props: { message: `Unknown command: ${command}` },
+        componentKey: command,
+        props: { message: `richen.sh: command not found: ${command}` },
+        time: new Date().toISOString(),
       }),
     ]);
   };
