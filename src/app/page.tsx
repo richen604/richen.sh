@@ -51,14 +51,14 @@ export default function Home() {
         </div>
       </nav>
       <div>{display?.length > 0 ? display : null}</div>
-      <div className="w-full h-10 p-2">
+      <div className="flex w-full h-10 p-2">
         <span>&gt;</span>
-
         <input
           ref={inputRef}
-          className="bg-transparent outline-none ml-2 w-11/12"
+          className="bg-transparent outline-none ml-2 flex-grow"
           onKeyDown={handleKeyDown}
         />
+        <span className="ml-2">{new Date().toLocaleTimeString()}</span>
       </div>
     </main>
   );

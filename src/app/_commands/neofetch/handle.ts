@@ -8,7 +8,11 @@ const handleNeofetch = () => {
   const result = parser.getResult();
 
   store.set(displayAtom, [
-    JSON.stringify({ componentKey: "neofetch", props: { result } }),
+    JSON.stringify({
+      componentKey: "neofetch",
+      props: { result },
+      time: new Date().toISOString(),
+    }),
   ]);
 };
 

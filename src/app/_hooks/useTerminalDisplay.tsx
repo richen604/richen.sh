@@ -13,7 +13,11 @@ const useTerminalDisplay = () => {
   const [renderedDisplay] = useAtom(renderedDisplayAtom);
 
   const push = (componentKey: Commands, props?: unknown) => {
-    const newItem = JSON.stringify({ componentKey, props });
+    const newItem = JSON.stringify({
+      componentKey,
+      props,
+      time: new Date().toISOString(),
+    });
     store.set(displayAtom, [...display, newItem]);
   };
 
@@ -22,7 +26,9 @@ const useTerminalDisplay = () => {
   };
 
   const set = (items: { componentKey: Commands; props?: unknown }[]) => {
-    const newItems = items.map((item) => JSON.stringify(item));
+    const newItems = items.map((item) =>
+      JSON.stringify({ ...item, time: new Date().toISOString() })
+    );
     store.set(displayAtom, newItems);
   };
 
