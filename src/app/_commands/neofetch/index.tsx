@@ -33,33 +33,33 @@ const handleBrowserSvg = (browser: string | undefined) => {
 
 const neofetch = ({ result }: { result: UAParser.IResult }) => {
   return (
-    <div className="flex m-4">
-      <div className="w-1/4">
+    <div className="flex flex-col md:flex-row m-2">
+      <div className="w-full md:w-1/3 mb-4 md:mb-0">
         <Image
-          className="filter invert"
+          className="filter invert p-2"
           priority
           src={handleBrowserSvg(result.browser.name)!}
-          width={250}
-          height={250}
+          width={220}
+          height={220}
           alt="Neofetch Image"
         />
       </div>
-      <div className="w-3/4">
-        <div className="mb-2">
+      <div className="w-full md:w-2/3 text-sm">
+        <div className="mb-1">
           <div>Browser Name: {result.browser.name ?? "N/A"}</div>
           <div>Browser Version: {result.browser.version ?? "N/A"}</div>
         </div>
-        <hr className="border-white w-3/4 my-4" />
-        <div className="mb-2">
+        <hr className="border-white w-full md:w-2/3 my-2" />
+        <div className="mb-1">
           <div>OS Name: {result.os.name ?? "N/A"}</div>
           <div>OS Version: {result.os.version ?? "N/A"}</div>
         </div>
-        <hr className="border-white w-3/4 my-4" />
-        <div className="mb-2">
+        <hr className="border-white w-full md:w-2/3 my-2" />
+        <div className="mb-1">
           <div>CPU: {result.cpu.architecture ?? "N/A"}</div>
         </div>
-        <hr className="border-white w-3/4 my-4" />
-        <div className="mb-2">
+        <hr className="border-white w-full md:w-2/3 my-2" />
+        <div className="mb-1">
           <div>Device Model: {result.device.model ?? "N/A"}</div>
           <div>Device Type: {result.device.type ?? "N/A"}</div>
           <div>Device Vendor: {result.device.vendor ?? "N/A"}</div>

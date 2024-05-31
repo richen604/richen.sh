@@ -19,7 +19,7 @@ export default function Home() {
   }, []);
 
   return (
-    <main className="text-xl font-mono flex flex-col p-10 h-screen overflow-auto">
+    <main className="text-sm md:text-base lg:text-lg font-mono flex flex-col p-10 h-screen overflow-auto">
       <span className="comment">// this is a comment </span>
       <nav className="flex mb-4">
         <div className="flex space-x-4">
@@ -55,14 +55,16 @@ export default function Home() {
         </div>
       </nav>
       <div>{display?.length > 0 ? display : null}</div>
-      <div className="flex w-full h-10 p-2">
+      <div className="flex w-full min-w-0 h-10 p-2 text-sm md:text-base lg:text-lg">
         <span>&gt;</span>
         <input
           ref={inputRef}
-          className="bg-transparent outline-none ml-2 flex-grow"
+          className="bg-transparent outline-none ml-2 min-w-0 flex-grow"
           onKeyDown={handleKeyDown}
         />
-        <span className="ml-2">{new Date().toLocaleTimeString()}</span>
+        <span className="text-nowrap ml-2 text-xs md:text-sm lg:text-base">
+          {new Date().toLocaleTimeString()}
+        </span>
       </div>
     </main>
   );
