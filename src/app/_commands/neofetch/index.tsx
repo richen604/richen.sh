@@ -1,7 +1,7 @@
 // Font Awesome Free 6.5.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.
 "use-client";
 import Image from "next/image";
-import { type BrowserInfo } from "./handle";
+
 import chrome from "@/public/chrome.svg";
 import firefox from "@/public/firefox-browser.svg";
 import safari from "@/public/safari.svg";
@@ -32,27 +32,39 @@ const handleBrowserSvg = (browser: string | undefined) => {
   }
 };
 
-const neofetch = ({ browserInfo }: { browserInfo: BrowserInfo }) => {
+const neofetch = ({ result }: { result: UAParser.IResult }) => {
   return (
     <div className="flex m-4">
       <div className="w-1/4">
         <Image
           className="filter invert"
           priority
-          src={handleBrowserSvg(browserInfo.browserName)!}
+          src={handleBrowserSvg(result.browser.name)!}
           width={250}
           height={250}
           alt="Neofetch Image"
         />
       </div>
-      <div className="w-3/4 p-4">
-        <div>Browser Name: {browserInfo.browserName}</div>
-        <div>Browser Version: {browserInfo.browserVersion}</div>
-        <div>OS Name: {browserInfo.osName}</div>
-        <div>OS Version: {browserInfo.osVersion}</div>
-        <div>Device Model: {browserInfo.deviceModel}</div>
-        <div>Device Type: {browserInfo.deviceType}</div>
-        <div>Device Vendor: {browserInfo.deviceVendor}</div>
+      <div className="w-3/4">
+        <div className="mb-2">
+          <div>Browser Name: {result.browser.name ?? "N/A"}</div>
+          <div>Browser Version: {result.browser.version ?? "N/A"}</div>
+        </div>
+        <hr className="border-white w-3/4 my-4" />
+        <div className="mb-2">
+          <div>OS Name: {result.os.name ?? "N/A"}</div>
+          <div>OS Version: {result.os.version ?? "N/A"}</div>
+        </div>
+        <hr className="border-white w-3/4 my-4" />
+        <div className="mb-2">
+          <div>CPU: {result.cpu.architecture ?? "N/A"}</div>
+        </div>
+        <hr className="border-white w-3/4 my-4" />
+        <div className="mb-2">
+          <div>Device Model: {result.device.model ?? "N/A"}</div>
+          <div>Device Type: {result.device.type ?? "N/A"}</div>
+          <div>Device Vendor: {result.device.vendor ?? "N/A"}</div>
+        </div>
       </div>
     </div>
   );

@@ -1,8 +1,8 @@
+import type UAParser from "ua-parser-js";
 import handleClear from "./clear";
 import Echo, { handleEcho } from "./echo";
 import Help, { handleHelp } from "./help";
 import Neofetch, { handleNeofetch } from "./neofetch";
-import type { BrowserInfo } from "./neofetch/handle";
 
 export type CommandParams = {
   args?: string[];
@@ -25,8 +25,8 @@ export const componentMap: Record<string, React.FunctionComponent<any>> = {
   echo: (props: React.PropsWithChildren<{ message: string }>) => (
     <Echo message={props.message} />
   ),
-  neofetch: (props: React.PropsWithChildren<{ browserInfo: BrowserInfo }>) => (
-    <Neofetch browserInfo={props.browserInfo} />
+  neofetch: (props: React.PropsWithChildren<{ result: UAParser.IResult }>) => (
+    <Neofetch result={props.result} />
   ),
 };
 
