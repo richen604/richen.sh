@@ -23,5 +23,6 @@
       "error",
       { "checksVoidReturn": { "attributes": false } }
     ]
-  }
+  },
+  "ignorePatterns": ["public/js/*.js", "next.config.mjs"]
 }

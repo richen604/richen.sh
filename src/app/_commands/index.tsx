@@ -4,6 +4,7 @@ import Echo, { handleEcho } from "./echo";
 import Help, { handleHelp } from "./help";
 import Neofetch, { handleNeofetch } from "./neofetch";
 import NextShader, { handleNextShader } from "./next-shader";
+import Shader from "./shader";
 
 export type CommandParams = {
   args?: string[];
@@ -31,6 +32,7 @@ export const componentMap: Record<string, React.FunctionComponent<any>> = {
     <Neofetch result={props.result} />
   ),
   "next-shader": () => <NextShader />,
+  shader: () => <Shader />,
 };
 
 export default commandRegistry;

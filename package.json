@@ -14,13 +14,16 @@
     "@react-three/postprocessing": "^2.16.2",
     "jotai": "^2.8.2",
     "next": "14.2.3",
+    "promise-polyfill": "^8.3.0",
     "react": "^18",
     "react-dom": "^18",
     "three": "^0.164.1",
-    "ua-parser-js": "^1.0.38"
+    "ua-parser-js": "^1.0.38",
+    "whatwg-fetch": "^3.6.20"
   },
   "devDependencies": {
     "@types/node": "^20",
+    "@types/promise-polyfill": "^6.0.6",
     "@types/react": "^18",
     "@types/react-dom": "^18",
     "@types/three": "^0.164.1",
