@@ -7,15 +7,10 @@ import { registerCursorTimeout } from "./registerCursorTimeout.js";
   console.log("Hello, world!");
   let wrap = null; // Wrapper DOM that wraps almost everything
   let canvas = null; // Screen
-  let editor = null; // Ace editor instance
-  let lineout = null; // Status bar DOM
-  let counter = null; // Character count DOM
   let message = null; // Message DOM
   let mode = null; // Variable mode select
   let animate = null; // Toggle for animation
   let frames = null; // Render frame select
-  let size = null; // Resolution select
-  let download = null; // Download button
   let link = null; // Generate link button
   let layer = null; // Dialog layer
   let dialog = null; // Dialog message wrapper
@@ -37,34 +32,8 @@ import { registerCursorTimeout } from "./registerCursorTimeout.js";
 
   let fragmen = null; // Instance of fragmen.js
   let urlParameter = null; // searchParams object for parsing GET parameters
-  let vimMode = false; // vim mode
-  let syncScroll = true; // Whether to synchronize scroll when receiving a broadcast in the editor
 
-  let currentDirectorId = null; // Own director ID
-  let friendDirectorId = null; // Invitation director ID
-  let currentChannelId = null; // Channel ID where you are the director
-  let currentDirectorName = null; // Name or group name specified by the director
-  let currentSnapshotId = null; // Snapshot ID to load
-  let broadcastForm = null; // Actual registration form
-  let broadcastSetting = null; // Input content of the registration form
-  let directionMode = null; // What the director is directing
-  let friendDirectionMode = null; // What the friend is directing
-  let isOwner = null; // Whether you are the owner of the channel
-  let isDirectorInitialized = true; // Whether initialization is complete when the owner (and friends) click the return URL
-  let shareURL = ""; // Broadcast share URL
-  let ownerURL = ""; // URL to return to the same environment as a director
-  let friendURL = ""; // Friend share URL
-  let starCounterTimer = null; // Timer for star animation
-  let viewerCounterTimer = null; // Timer for viewer count animation
   let graphicsDisable = false; // Whether to disable the graphics editor
-  let soundDisable = false; // Whether to disable the sound editor
-  let broadcastMode = "none"; // Behavior towards broadcast (none, owner, friend, audience)
-  let soundPlay = 0; // Count when sound is played by the broadcaster
-  let channelData = null; // Data of the channel
-  let starData = null; // Data related to stars
-  let viewerData = null; // Data related to viewer count
-  let editorFontSize = 17; // Font size of the editor
-  let isEdit = false; // Whether the code has been edited
   let disableAttachEvent = false; // Set to true to prevent setting beforeunload when editing code
 
   /** Function to remove the process added by {@link registerCursorTimeout} */
@@ -78,23 +47,9 @@ import { registerCursorTimeout } from "./registerCursorTimeout.js";
     resize: true,
     escape: false,
   };
+
   // Base URL for making requests to external services
   const BASE_URL = location.origin;
-
-  // Broadcast assignment settings
-  const BROADCAST_ASSIGN = {
-    BOTH: "both",
-    ONLY_GRAPHICS: "onlygraphics",
-    INVITE_SOUND: "invitesound",
-    ONLY_SOUND: "onlysound",
-    INVITE_GRAPHICS: "invitegraphics",
-  };
-  // What the director is directing
-  const BROADCAST_DIRECTION = {
-    BOTH: "both",
-    GRAPHICS: "graphics",
-    SOUND: "sound",
-  };
 
   window.addEventListener(
     "DOMContentLoaded",
@@ -102,20 +57,15 @@ import { registerCursorTimeout } from "./registerCursorTimeout.js";
       // References to the DOM
       wrap = document.querySelector("#wrap");
       canvas = document.querySelector("#webgl");
-      lineout = document.querySelector("#lineout");
-      counter = document.querySelector("#counter");
       message = document.querySelector("#message");
       mode = document.querySelector("#modeselect");
       animate = document.querySelector("#pausetoggle");
       frames = document.querySelector("#frameselect");
-      size = document.querySelector("#sizeselect");
-      download = document.querySelector("#downloadgif");
       link = document.querySelector("#permanentlink");
       layer = document.querySelector("#layer");
       dialog = document.querySelector("#dialogmessage");
       infoIcon = document.querySelector("#informationicon");
       fullIcon = document.querySelector("#fullscreenicon");
-      broadIcon = document.querySelector("#broadcasticon");
       starIcon = document.querySelector("#stariconwrap");
       menuIcon = document.querySelector("#togglemenuicon");
       noteIcon = document.querySelector("#noteicon");
