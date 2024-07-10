@@ -4,7 +4,8 @@ import Echo, { handleEcho } from "./echo";
 import Help, { handleHelp } from "./help";
 import Neofetch, { handleNeofetch } from "./neofetch";
 import NextShader, { handleNextShader } from "./next-shader";
-import Shader from "./shader";
+import Shader, { type ShaderProps } from "./shader";
+import handleShader from "./shader/handle";
 
 export type CommandParams = {
   args?: string[];
@@ -18,6 +19,7 @@ const commandRegistry = {
   help: () => handleHelp(),
   neofetch: () => handleNeofetch(),
   "next-shader": () => handleNextShader(),
+  shader: (params?: CommandParams) => handleShader(params ?? {}),
 };
 
 export type Commands = keyof typeof commandRegistry;
@@ -32,7 +34,7 @@ export const componentMap: Record<string, React.FunctionComponent<any>> = {
     <Neofetch result={props.result} />
   ),
   "next-shader": () => <NextShader />,
-  shader: () => <Shader />,
+  shader: (props: ShaderProps) => <Shader {...props} />,
 };
 
 export default commandRegistry;

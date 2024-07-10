@@ -706,7 +706,7 @@ void main(){
     if (!this.gl.getProgramParameter(program, this.gl.LINK_STATUS)) {
       let msg = this.gl.getProgramInfoLog(program);
       msg = this.formatErrorMessage(msg);
-      console.warn(msg);
+      // console.warn(msg);
       if (this.onBuildCallback != null) {
         const t = getTimeString();
         this.onBuildCallback("error", ` ● [ ${t} ] ${msg}`);
@@ -908,7 +908,7 @@ void main(){
     if (!this.gl.getShaderParameter(k, this.gl.COMPILE_STATUS)) {
       let msg = this.gl.getShaderInfoLog(k);
       msg = this.formatErrorMessage(msg);
-      console.warn(msg);
+      // console.warn(msg);
       if (this.onBuildCallback != null) {
         this.onBuildCallback("error", ` ● [ ${t} ] ${msg}`);
       }

@@ -2,7 +2,7 @@
 
 import { atom, createStore } from "jotai";
 import { atomWithStorage } from "jotai/utils";
-import type commandRegistry from "../_commands";
+import commandRegistry from "../_commands";
 import { componentMap } from "../_commands";
 
 export type DisplayItem = {
@@ -22,10 +22,13 @@ export const displayAtom = atomWithStorage<string[]>("terminal-display", [
 
 export const renderedDisplayAtom = atom((get) => {
   const display = get(displayAtom);
+  console.log(display);
   return display.map((item, idx) => {
     const { componentKey, props, time } = JSON.parse(item) as DisplayItem;
 
-    if (!componentMap[componentKey]) {
+    console.log("component props", props);
+
+    if (!componentMap[componentKey] && !commandRegistry[componentKey]) {
       const unknownMessage = `richen.sh: command not found: ${componentKey}`;
       return (
         <div key={idx}>

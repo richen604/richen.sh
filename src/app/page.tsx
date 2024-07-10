@@ -22,7 +22,7 @@ export default function Home() {
     <main className="text-sm md:text-base lg:text-lg font-mono flex flex-col p-10 h-screen overflow-auto">
       <span className="comment">// this is a comment </span>
       <nav className="flex mb-4">
-        <div className="flex space-x-4">
+        <div className="flex space-x-4 ">
           <button className="focus:bg-[#ffffff1a] hover:bg-[#ffffff1a]">
             projects
           </button>

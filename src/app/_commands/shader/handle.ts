@@ -1,12 +1,23 @@
 import { displayAtom, store } from "@/app/_store/terminalAtoms";
+import { type CommandParams } from "..";
 
-const handle = async (command: string) => {
-  store.set(displayAtom, [
-    JSON.stringify({
-      componentKey: "shader",
-      time: new Date().toISOString(),
-    }),
-  ]);
+const handleShader = ({ args, flags }: CommandParams) => {
+  console.log(args);
+  console.log(flags);
+
+  if (flags)
+    // help flag
+
+    store.set(displayAtom, [
+      JSON.stringify({
+        componentKey: "shader",
+        time: new Date().toISOString(),
+        props: {
+          args,
+          flags,
+        },
+      }),
+    ]);
 };
 
-export default handle;
+export default handleShader;
