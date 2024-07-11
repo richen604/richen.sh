@@ -22,11 +22,8 @@ export const displayAtom = atomWithStorage<string[]>("terminal-display", [
 
 export const renderedDisplayAtom = atom((get) => {
   const display = get(displayAtom);
-  console.log(display);
   return display.map((item, idx) => {
     const { componentKey, props, time } = JSON.parse(item) as DisplayItem;
-
-    console.log("component props", props);
 
     if (!componentMap[componentKey] && !commandRegistry[componentKey]) {
       const unknownMessage = `richen.sh: command not found: ${componentKey}`;
