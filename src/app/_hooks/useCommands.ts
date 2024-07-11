@@ -16,6 +16,8 @@ const useCommands = () => {
     const inputElement = event.target as HTMLInputElement;
 
     if (event.key === "Enter") {
+      inputElement.scrollIntoView();
+      inputElement.focus();
       const commandArgs = inputElement.value.trim().split(" ");
       const command = commandArgs[0];
       const { args, flags, all } = parseArgsAndFlags(commandArgs.slice(1));

@@ -11,15 +11,17 @@ export default function Home() {
   const inputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
-    if (inputRef.current) {
-      inputRef.current.focus();
-    } else {
-      console.error("inputRef is not assigned");
-    }
+    setTimeout(() => {
+      if (inputRef.current) {
+        inputRef.current.focus();
+      } else {
+        console.error("inputRef is not assigned");
+      }
+    }, 100); // Delay to ensure DOM is fully loaded
   }, []);
 
   return (
-    <main className="text-sm md:text-base lg:text-lg font-mono flex flex-col p-10 h-screen overflow-auto">
+    <main className="h-full text-sm md:text-base lg:text-lg font-mono flex flex-col p-10 mb-5 overflow-y-scroll">
       <span className="comment">// this is a comment </span>
       <nav className="flex mb-4">
         <div className="flex space-x-4 ">
