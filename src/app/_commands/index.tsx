@@ -3,7 +3,6 @@ import handleClear from "./clear";
 import Echo, { handleEcho } from "./echo";
 import Help, { handleHelp } from "./help";
 import Neofetch, { handleNeofetch } from "./neofetch";
-import NextShader, { handleNextShader } from "./next-shader";
 import Shader, { type ShaderProps } from "./shader";
 import handleShader from "./shader/handle";
 
@@ -18,7 +17,6 @@ const commandRegistry = {
   clear: (params?: CommandParams) => handleClear(params ?? {}),
   help: () => handleHelp(),
   neofetch: () => handleNeofetch(),
-  "next-shader": () => handleNextShader(),
   shader: (params?: CommandParams) => handleShader(params ?? {}),
 };
 
@@ -33,7 +31,6 @@ export const componentMap: Record<string, React.FunctionComponent<any>> = {
   neofetch: (props: React.PropsWithChildren<{ result: UAParser.IResult }>) => (
     <Neofetch result={props.result} />
   ),
-  "next-shader": () => <NextShader />,
   shader: (props: ShaderProps) => <Shader {...props} />,
 };
 
