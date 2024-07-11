@@ -1,12 +1,15 @@
 import React, { useEffect, useRef, useState } from "react";
-import { Fragmen } from "@/public/js/fragmen.js";
-import { CommandParams } from "..";
+import { Fragmen } from "./fragmen.js";
 export { default as handleShader } from "./handle";
 
 const examples = {
   ocean: [
     `vec3 d=normalize(FC.xyz*2.-r.xyy),p;vec2 u=FC.xy/r-.5;for(float i,j;i++<1e1;p+=d*(snoise3D(p*.1*j-t*.2)/j+6.-p.y*.5+p.z*.5))j=exp(mod(i,5.)*.6);o=vec4(texture(b,.5+u-u*fsnoise(u+t)/4e1).gba,refract(normalize(cross(dFdx(p),dFdy(p))),d,1.2).z+.02/length(u));`,
     null,
+  ],
+  blossom: [
+    `vec3 p,q=vec3(-.1,.65,-.6);for(float j,i,e,v,u;i++<130.;o+=.007/exp(3e3/(v*vec4(9,5,4,4)+e*4e6))){p=q+=vec3((FC.xy-.5*r)/r.y,1)*e;for(j=e=v=7.;j++<21.;e=min(e,max(length(p.xz=abs(p.xz*rotate2D(j+sin(1./u+t)/v))-.53)-.02/u,p.y=1.8-p.y)/v))v/=u=dot(p,p),p/=u+.01;}`,
+    `https://x.com/zozuar/status/1763906851337326736`,
   ],
   crystal: [
     `for(float i,g,e,s;i++<80.;o+=.1/exp(e+3.+sin(vec4(1,1.5,2,0)-log(s)))){vec3 p=vec3((FC.xy*2.-r)/r.y*g,g);mat2 m=rotate2D(t*.2);p.xz*=m;p.yz*=m;p.z+=t/PI;p++;s=8.;for(int j;j++<9;p/=e)p=mod(p-1.,2.)-1.,p.xz*=rotate2D(PI/4.),s/=e=exp(dot(p,p)-1.6);g+=e=length(p)/s;}`,
@@ -46,14 +49,6 @@ const ExampleSelect = ({ onExampleChange, defaultExample }) => {
 const ModeSelect = ({ onModeChange, defaultMode }) => {
   return (
     <div>
-      <h3
-        title="classic: An ordinary shader editor.
-geek: Uniform variables become a single character.
-geeker: geek mode + you don't have to define precision and uniform variables by yourself.
-geekest: geeker mode + 'void main(){}' can be omitted, 'gl_FragCoord' can be described as 'FC'. In addition, a variety of GLSL snippets are available."
-      >
-        Type of Shader
-      </h3>
       <div>
         <select
           className="w-auto dark:bg-gray-800 dark:text-white"
@@ -83,7 +78,7 @@ export type ShaderProps = {
   modeArg?: number;
 };
 
-const Shader = ({ shader, modeArg }: ShaderProps) => {
+const Shader = ({ modeArg }: ShaderProps) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const fragmenRef = useRef(null);
   const [mode, setMode] = useState(modeArg ?? 0);
@@ -124,6 +119,16 @@ const Shader = ({ shader, modeArg }: ShaderProps) => {
       };
 
       void initializeShader();
+
+      fragmenRef.current.onBuild((status, msg) => {
+        const msgParts = msg.split("\n");
+
+        if (status === "success") {
+          setMsg(msgParts[0]);
+        } else {
+          setMsg(msgParts[0]);
+        }
+      });
     }
 
     return () => {
@@ -137,7 +142,7 @@ const Shader = ({ shader, modeArg }: ShaderProps) => {
     if (fragmenRef.current) {
       fragmenRef.current.mode = newMode;
       fragmenRef.current.render(fragmenRef.current.FS);
-      console.log(fragmenRef.current.run);
+
       if (!fragmenRef.current.run) {
         fragmenRef.current.mode = lastMode;
         fragmenRef.current.render(fragmenRef.current.FS);
@@ -153,18 +158,35 @@ const Shader = ({ shader, modeArg }: ShaderProps) => {
 
   return (
     <>
-      <canvas
-        ref={canvasRef}
-        style={{
-          width: "80vw",
-          height: "calc(70vw * 9 / 16)",
-        }}
-      />
-      <ModeSelect onModeChange={handleModeChange} defaultMode={mode} />
-      <ExampleSelect
-        onExampleChange={handleExampleChange}
-        defaultExample={example}
-      />
+      <div className="flex flex-col justify-start items-start">
+        <canvas
+          ref={canvasRef}
+          style={{
+            width: "75%",
+            height: "60%",
+          }}
+        />
+        {examples[example][1] && (
+          <div className="text-xs text-gray-500 mt-2">
+            Credit:{" "}
+            <a
+              href={examples[example][1]}
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              {examples[example][1]}
+            </a>
+          </div>
+        )}
+        <div className="flex flex-row place-self-start gap-2">
+          <ModeSelect onModeChange={handleModeChange} defaultMode={mode} />
+          <ExampleSelect
+            onExampleChange={handleExampleChange}
+            defaultExample={example}
+          />
+          <div className="comment w-full">{msg}</div>
+        </div>
+      </div>
     </>
   );
 };
