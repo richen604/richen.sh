@@ -8,7 +8,7 @@ import handleShader from "./shader/handle";
 
 export type CommandParams = {
   args?: string[];
-  flags?: Record<string, boolean>;
+  flags?: Record<string, string[]>;
   all?: string[];
 };
 

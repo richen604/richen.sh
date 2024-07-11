@@ -1,7 +1,10 @@
 import type React from "react";
 import { useAtom } from "jotai";
 import { type DisplayItem, displayAtom } from "../_store/terminalAtoms";
-import commandRegistry, { type Commands } from "../_commands";
+import commandRegistry, {
+  type CommandParams,
+  type Commands,
+} from "../_commands";
 import { useState } from "react";
 
 const useCommands = () => {
@@ -18,10 +21,10 @@ const useCommands = () => {
     if (event.key === "Enter") {
       inputElement.scrollIntoView();
       inputElement.focus();
-      const commandArgs = inputElement.value.trim().split(" ");
-      const command = commandArgs[0];
+      const commandArgs = parseCommandArgs(inputElement.value.trim());
+      const command = commandArgs[0] as Commands;
       const { args, flags, all } = parseArgsAndFlags(commandArgs.slice(1));
-      handleCommand(command as Commands, args, flags, all);
+      handleCommand({ command, args, flags, all });
       setHistoryIndex(-1);
       inputElement.value = "";
     } else if (event.key === "ArrowUp") {
@@ -36,29 +39,52 @@ const useCommands = () => {
     }
   };
 
+  const parseCommandArgs = (input: string) => {
+    const regex = /`([^`]*)`|[^\s]+/g;
+    const matches = [];
+    let match;
+    while ((match = regex.exec(input)) !== null) {
+      matches.push(match[1] || match[0]);
+    }
+    return matches;
+  };
+
   const parseArgsAndFlags = (args: string[]) => {
-    const flags: Record<string, boolean> = {};
+    const flags: Record<string, string[]> = {};
     const filteredArgs: string[] = [];
     const all: string[] = [];
 
-    args.forEach((arg) => {
+    args.forEach((arg, index) => {
       if (arg.startsWith("-")) {
-        flags[arg] = true;
-      } else {
+        const flag = arg;
+        const nextArg = args[index + 1];
+        if (nextArg && !nextArg.startsWith("-")) {
+          if (!flags[flag]) {
+            flags[flag] = [];
+          }
+          flags[flag].push(nextArg);
+        } else {
+          flags[flag] = [];
+        }
+      } else if (!args[index - 1]?.startsWith("-")) {
         filteredArgs.push(arg);
       }
       all.push(arg);
     });
 
+    console.log("filteredArgs", filteredArgs);
+    console.log("flags", flags);
+    console.log("all", all);
+
     return { args: filteredArgs, flags, all };
   };
 
-  const handleCommand = (
-    command: Commands,
-    args: string[],
-    flags: Record<string, boolean>,
-    all: string[]
-  ) => {
+  const handleCommand = ({
+    command,
+    args,
+    flags,
+    all,
+  }: CommandParams & { command: Commands }) => {
     const commandHandler = commandRegistry[command];
 
     if (commandHandler) {
