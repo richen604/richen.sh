@@ -1,10 +1,10 @@
 import type UAParser from "ua-parser-js";
-import handleClear from "./clear";
 import Echo, { handleEcho } from "./echo";
 import Help, { handleHelp } from "./help";
 import Neofetch, { handleNeofetch } from "./neofetch";
 import Shader, { type ShaderProps } from "./shader";
 import handleShader from "./shader/handle";
+import handleClear from "./clear";
 
 export type CommandParams = {
   args?: string[];

@@ -2,8 +2,8 @@
 "use client";
 
 import { useEffect, useRef } from "react";
-import useCommands from "./_hooks/useCommands";
-import useTerminalDisplay from "./_hooks/useTerminalDisplay";
+import useCommands from "./hooks/useCommands";
+import useTerminalDisplay from "./hooks/useTerminalDisplay";
 
 export default function Home() {
   const { display, set, clear } = useTerminalDisplay();

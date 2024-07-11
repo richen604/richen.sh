@@ -3,9 +3,9 @@ import {
   store,
   displayAtom,
   renderedDisplayAtom,
-} from "../_store/terminalAtoms";
+} from "../store/terminalAtoms";
 
-import type { Commands } from "../_commands";
+import type { Commands } from "../commands";
 
 const useTerminalDisplay = () => {
   const [display] = useAtom(displayAtom);

@@ -1,4 +1,4 @@
-import { displayAtom, store } from "@/app/_store/terminalAtoms";
+import { displayAtom, store } from "@/app/store/terminalAtoms";
 import UAParser from "ua-parser-js";
 
 const handleNeofetch = () => {
@@ -13,7 +13,5 @@ const handleNeofetch = () => {
     }),
   ]);
 };
-
-
 
 export default handleNeofetch;

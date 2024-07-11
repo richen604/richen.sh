@@ -1,5 +1,5 @@
-import { type CommandParams } from ".";
-import { store, displayAtom } from "../_store/terminalAtoms";
+import { type CommandParams } from "..";
+import { store, displayAtom } from "../../store/terminalAtoms";
 
 const handleClear = ({ args, flags }: CommandParams) => {
   if (flags && (flags["-h"] || flags["-help"])) {

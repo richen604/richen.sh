@@ -1,4 +1,4 @@
-import { displayAtom, store } from "@/app/_store/terminalAtoms";
+import { displayAtom, store } from "@/app/store/terminalAtoms";
 
 const handleHelp = () => {
   store.set(displayAtom, (prev) => [

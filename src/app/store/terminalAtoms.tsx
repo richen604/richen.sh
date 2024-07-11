@@ -2,8 +2,8 @@
 
 import { atom, createStore } from "jotai";
 import { atomWithStorage, createJSONStorage } from "jotai/utils";
-import commandRegistry from "../_commands";
-import { componentMap } from "../_commands";
+import commandRegistry from "../commands";
+import { componentMap } from "../commands";
 
 export type DisplayItem = {
   componentKey: keyof typeof commandRegistry;
@@ -21,7 +21,7 @@ export const displayAtom = atomWithStorage<string[]>(
       props: {},
     }),
   ],
-  createJSONStorage(() => localStorage),
+  createJSONStorage(),
   {
     getOnInit: true,
   }

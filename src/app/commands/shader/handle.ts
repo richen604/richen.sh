@@ -1,4 +1,4 @@
-import { displayAtom, store } from "@/app/_store/terminalAtoms";
+import { displayAtom, store } from "@/app/store/terminalAtoms";
 import { type CommandParams } from "..";
 
 const handleShader = ({ args, flags }: CommandParams) => {
