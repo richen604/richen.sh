@@ -1,5 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import { Fragmen } from "./fragmen.js";
+import { displayAtom, store } from "@/app/store/terminalAtoms";
 export { default as handleShader } from "./handle";
 
 const examples = {
@@ -78,15 +79,16 @@ const ModeSelect = ({
 
 export type ShaderProps = {
   shader?: string;
+  exampleArg: keyof typeof examples;
   modeArg?: number;
 };
 
-const Shader = ({ modeArg }: ShaderProps) => {
+const Shader = ({ modeArg, exampleArg = "submerge" }: ShaderProps) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const fragmenRef = useRef<Fragmen | null>(null);
   const [mode, setMode] = useState(modeArg ?? 0);
   const [msg, setMsg] = useState("");
-  const [example, setExample] = useState<keyof typeof examples>("submerge");
+  const [example, setExample] = useState<keyof typeof examples>(exampleArg);
 
   useEffect(() => {
     if (canvasRef.current) {
@@ -150,6 +152,15 @@ const Shader = ({ modeArg }: ShaderProps) => {
       if (!fragmenRef.current.run) {
         fragmenRef.current.mode = lastMode;
         fragmenRef.current.render(fragmenRef.current.FS);
+      } else {
+        setMode(newMode);
+        store.set(displayAtom, [
+          JSON.stringify({
+            componentKey: "shader",
+            props: { modeArg: newMode, exampleArg: example },
+            time: new Date().toISOString(),
+          }),
+        ]);
       }
     }
   };
@@ -161,6 +172,13 @@ const Shader = ({ modeArg }: ShaderProps) => {
     const newExample = event.target.value as keyof typeof examples;
     fragmenRef.current.render(examples[newExample][0]);
     setExample(newExample);
+    store.set(displayAtom, [
+      JSON.stringify({
+        componentKey: "shader",
+        props: { modeArg: mode, exampleArg: newExample },
+        time: new Date().toISOString(),
+      }),
+    ]);
   };
 
   return (
