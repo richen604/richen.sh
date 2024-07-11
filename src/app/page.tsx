@@ -20,7 +20,7 @@ export default function Home() {
   }, []);
 
   return (
-    <main className="h-full text-sm md:text-base lg:text-lg font-mono flex flex-col p-10 mb-5 overflow-y-scroll">
+    <main className="min-h-screen text-sm md:text-base lg:text-lg font-mono flex flex-col p-10 mb-5 overflow-y-scroll">
       <span className="comment">// this is a comment </span>
       <nav className="flex mb-4">
         <div className="flex space-x-4 ">

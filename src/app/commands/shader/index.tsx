@@ -90,10 +90,6 @@ const Shader = ({ modeArg }: ShaderProps) => {
 
   useEffect(() => {
     if (canvasRef.current) {
-      canvasRef.current.style.setProperty("animation", "none", "important");
-      canvasRef.current.style.setProperty("isolation", "isolate", "important");
-      canvasRef.current.style.setProperty("opacity", "1", "important");
-
       const options = {
         target: canvasRef.current,
         mouse: true,
