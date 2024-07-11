@@ -3,9 +3,9 @@ import { Fragmen } from "./fragmen.js";
 export { default as handleShader } from "./handle";
 
 const examples = {
-  ocean: [
+  submerge: [
     `vec3 d=normalize(FC.xyz*2.-r.xyy),p;vec2 u=FC.xy/r-.5;for(float i,j;i++<1e1;p+=d*(snoise3D(p*.1*j-t*.2)/j+6.-p.y*.5+p.z*.5))j=exp(mod(i,5.)*.6);o=vec4(texture(b,.5+u-u*fsnoise(u+t)/4e1).gba,refract(normalize(cross(dFdx(p),dFdy(p))),d,1.2).z+.02/length(u));`,
-    null,
+    "https://x.com/XorDev/status/1638276547411955731",
   ],
   blossom: [
     `vec3 p,q=vec3(-.1,.65,-.6);for(float j,i,e,v,u;i++<130.;o+=.007/exp(3e3/(v*vec4(9,5,4,4)+e*4e6))){p=q+=vec3((FC.xy-.5*r)/r.y,1)*e;for(j=e=v=7.;j++<21.;e=min(e,max(length(p.xz=abs(p.xz*rotate2D(j+sin(1./u+t)/v))-.53)-.02/u,p.y=1.8-p.y)/v))v/=u=dot(p,p),p/=u+.01;}`,
@@ -23,14 +23,15 @@ const examples = {
     `for(float i,T;i<1.;i+=.01){vec3 P=vec3(1.-fract(T=t+i),sin(vec2(1,1.1)*T+fract(sin(vec2(1,2)*(ceil(T)+i))*1e4)*PI2)*.2);o+=smoothstep(.03,0.,length(cross(normalize(vec3(r.y,FC.xy-r*.5)),P)))*exp(-dot(P,P)*4.);}`,
     `https://x.com/kamoshika_vrc/status/1707410868613550119`,
   ],
-  discovery: [
-    `for (O *= C; C < 2e2; O += pow(.003 / abs(length(I - vec2(sin(C*.18 + S*.5),cos(C*.2 * (.96 + sin(S) * .04) + S))) + .015 * sin(S*4. + C*.033)) * (1. + cos(  C++  * .022 - S - S +
-  log(1. + length(I) * 4.) + vec4(0,1,2,0))), O-O+1.2));`,
-    `https://x.com/kishimisu/status/1802381432985116923`,
-  ],
 };
 
-const ExampleSelect = ({ onExampleChange, defaultExample }) => {
+const ExampleSelect = ({
+  onExampleChange,
+  defaultExample,
+}: {
+  onExampleChange: (event: React.ChangeEvent<HTMLSelectElement>) => void;
+  defaultExample: keyof typeof examples;
+}) => {
   return (
     <select
       className="w-auto dark:bg-gray-800 dark:text-white"
@@ -46,30 +47,32 @@ const ExampleSelect = ({ onExampleChange, defaultExample }) => {
   );
 };
 
-const ModeSelect = ({ onModeChange, defaultMode }) => {
+const ModeSelect = ({
+  onModeChange,
+  defaultMode,
+}: {
+  onModeChange: (event: React.ChangeEvent<HTMLSelectElement>) => void;
+  defaultMode: number;
+}) => {
   return (
-    <div>
-      <div>
-        <select
-          className="w-auto dark:bg-gray-800 dark:text-white"
-          onChange={onModeChange}
-          value={defaultMode}
-        >
-          <option value="0">classic</option>
-          <option value="1">geek</option>
-          <option value="2">geeker</option>
-          <option value="3">geekest</option>
-          <option value="4">classic (300 es)</option>
-          <option value="5">geek (300 es)</option>
-          <option value="6">geeker (300 es)</option>
-          <option value="7">geekest (300 es)</option>
-          <option value="8">classic (MRT)</option>
-          <option value="9">geek (MRT)</option>
-          <option value="10">geeker (MRT)</option>
-          <option value="11">geekest (MRT)</option>
-        </select>
-      </div>
-    </div>
+    <select
+      className="w-auto dark:bg-gray-800 dark:text-white"
+      onChange={onModeChange}
+      value={defaultMode}
+    >
+      <option value="0">classic</option>
+      <option value="1">geek</option>
+      <option value="2">geeker</option>
+      <option value="3">geekest</option>
+      <option value="4">classic (300 es)</option>
+      <option value="5">geek (300 es)</option>
+      <option value="6">geeker (300 es)</option>
+      <option value="7">geekest (300 es)</option>
+      <option value="8">classic (MRT)</option>
+      <option value="9">geek (MRT)</option>
+      <option value="10">geeker (MRT)</option>
+      <option value="11">geekest (MRT)</option>
+    </select>
   );
 };
 
@@ -80,10 +83,10 @@ export type ShaderProps = {
 
 const Shader = ({ modeArg }: ShaderProps) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
-  const fragmenRef = useRef(null);
+  const fragmenRef = useRef<Fragmen | null>(null);
   const [mode, setMode] = useState(modeArg ?? 0);
   const [msg, setMsg] = useState("");
-  const [example, setExample] = useState<keyof typeof examples>("ocean");
+  const [example, setExample] = useState<keyof typeof examples>("submerge");
 
   useEffect(() => {
     if (canvasRef.current) {
@@ -99,8 +102,11 @@ const Shader = ({ modeArg }: ShaderProps) => {
       };
       fragmenRef.current = new Fragmen(options);
 
-      const tryRender = (mode) => {
+      const tryRender = (mode: number) => {
         return new Promise((resolve) => {
+          if (!fragmenRef.current) {
+            return resolve(false);
+          }
           fragmenRef.current.mode = mode;
           fragmenRef.current.render(examples[example][0]);
           resolve(fragmenRef.current.run);
@@ -120,7 +126,7 @@ const Shader = ({ modeArg }: ShaderProps) => {
 
       void initializeShader();
 
-      fragmenRef.current.onBuild((status, msg) => {
+      fragmenRef.current.onBuild((status: string, msg: string) => {
         const msgParts = msg.split("\n");
 
         if (status === "success") {
@@ -132,11 +138,13 @@ const Shader = ({ modeArg }: ShaderProps) => {
     }
 
     return () => {
-      // Cleanup if necessary
+      if (fragmenRef.current) {
+        fragmenRef.current = null;
+      }
     };
-  }, []);
+  }, [example]);
 
-  const handleModeChange = (event) => {
+  const handleModeChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
     const lastMode = mode;
     const newMode = parseInt(event.target.value);
     if (fragmenRef.current) {
@@ -150,8 +158,11 @@ const Shader = ({ modeArg }: ShaderProps) => {
     }
   };
 
-  const handleExampleChange = (event) => {
-    const newExample = event.target.value;
+  const handleExampleChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
+    if (!fragmenRef.current) {
+      return;
+    }
+    const newExample = event.target.value as keyof typeof examples;
     fragmenRef.current.render(examples[newExample][0]);
     setExample(newExample);
   };
@@ -167,7 +178,7 @@ const Shader = ({ modeArg }: ShaderProps) => {
           }}
         />
         {examples[example][1] && (
-          <div className="text-xs text-gray-500 mt-2">
+          <div className="text-xs text-gray-500 m-2">
             Credit:{" "}
             <a
               href={examples[example][1]}
@@ -184,7 +195,7 @@ const Shader = ({ modeArg }: ShaderProps) => {
             onExampleChange={handleExampleChange}
             defaultExample={example}
           />
-          <div className="comment w-full">{msg}</div>
+          <div className="comment text-xs text-pretty w-full">{msg}</div>
         </div>
       </div>
     </>
