@@ -3,10 +3,11 @@
 
 import { useEffect, useRef } from "react";
 import useCommands from "./hooks/useCommands";
-import useTerminalDisplay from "./hooks/useTerminalDisplay";
+import { useAtom } from "jotai";
+import { displayAtom, renderedDisplayAtom, store } from "./store/terminalAtoms";
 
 export default function Home() {
-  const { display, set, clear } = useTerminalDisplay();
+  const [renderedDisplay] = useAtom(renderedDisplayAtom);
   const { handleKeyDown } = useCommands();
   const inputRef = useRef<HTMLInputElement>(null);
 
@@ -39,14 +40,18 @@ export default function Home() {
         <div className="flex space-x-4 ml-auto">
           <button
             onClick={() => {
-              set([{ componentKey: "help" }]);
+              store.set(displayAtom, [
+                JSON.stringify({
+                  componentKey: "help",
+                }),
+              ]);
             }}
             className="text-center w-6 h-6 focus:bg-[#ffffff1a] hover:bg-[#ffffff1a]"
           >
             ?
           </button>
           <button
-            onClick={() => clear()}
+            onClick={() => store.set(displayAtom, [])}
             className="text-center w-6 h-6 focus:bg-[#ffffff1a] hover:bg-[#ffffff1a]"
             aria-label="Clear Display"
           >
@@ -54,7 +59,7 @@ export default function Home() {
           </button>
         </div>
       </nav>
-      <div>{display?.length > 0 ? display : null}</div>
+      <div>{renderedDisplay?.length > 0 ? renderedDisplay : null}</div>
       <div className="flex w-full min-w-0 h-10 p-2 text-sm md:text-base lg:text-lg">
         <span>&gt;</span>
         <input
