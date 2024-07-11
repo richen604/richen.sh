@@ -1,7 +1,7 @@
 "use client";
 
 import { atom, createStore } from "jotai";
-import { atomWithStorage } from "jotai/utils";
+import { atomWithStorage, createJSONStorage } from "jotai/utils";
 import commandRegistry from "../_commands";
 import { componentMap } from "../_commands";
 
@@ -13,12 +13,19 @@ export type DisplayItem = {
 
 export const store = createStore();
 
-export const displayAtom = atomWithStorage<string[]>("terminal-display", [
-  JSON.stringify({
-    componentKey: "help",
-    props: {},
-  }),
-]);
+export const displayAtom = atomWithStorage<string[]>(
+  "terminal-display",
+  [
+    JSON.stringify({
+      componentKey: "help",
+      props: {},
+    }),
+  ],
+  createJSONStorage(() => localStorage),
+  {
+    getOnInit: true,
+  }
+);
 
 export const renderedDisplayAtom = atom((get) => {
   const display = get(displayAtom);

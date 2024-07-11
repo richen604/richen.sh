@@ -1,3 +1,4 @@
+"use client";
 import { type ReactNode } from "react";
 import { Provider } from "jotai";
 import { store } from "./terminalAtoms";

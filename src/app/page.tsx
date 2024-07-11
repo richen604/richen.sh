@@ -14,8 +14,6 @@ export default function Home() {
     setTimeout(() => {
       if (inputRef.current) {
         inputRef.current.focus();
-      } else {
-        console.error("inputRef is not assigned");
       }
     }, 100); // Delay to ensure DOM is fully loaded
   }, []);
