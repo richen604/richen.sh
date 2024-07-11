@@ -39,8 +39,11 @@ const useCommands = () => {
     }
   };
 
-  const parseCommandArgs = (input: string) => {
-    const regex = /`([^`]*)`|[^\s]+/g;
+  const parseCommandArgs = (input: string, delimiters: string[] = ["`"]) => {
+    const delimiterPattern = delimiters
+      .map((d) => `\\${d}([^\\${d}]*)\\${d}`)
+      .join("|");
+    const regex = new RegExp(`${delimiterPattern}|[^\\s]+`, "g");
     const matches = [];
     let match;
     while ((match = regex.exec(input)) !== null) {
@@ -71,10 +74,6 @@ const useCommands = () => {
       }
       all.push(arg);
     });
-
-    console.log("filteredArgs", filteredArgs);
-    console.log("flags", flags);
-    console.log("all", all);
 
     return { args: filteredArgs, flags, all };
   };
