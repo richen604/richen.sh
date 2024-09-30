@@ -1,7 +1,8 @@
 import React, { useEffect, useRef, useState } from "react";
 import { Fragmen } from "./fragmen.js";
-import { displayAtom, store } from "@/app/store/terminalAtoms";
-export { default as handleShader } from "./handle";
+import { displayAtom, store } from "@/app/store";
+import { type CommandParams } from "../index.jsx";
+import useCommands from "../../hooks/useCommands";
 
 const examples = {
   submerge: [
@@ -77,13 +78,17 @@ const ModeSelect = ({
   );
 };
 
-export type ShaderProps = {
-  shader?: string;
-  exampleArg: keyof typeof examples;
-  modeArg?: number;
-};
+const Shader: React.FC<CommandParams> = ({ args })=> {
+  const { replaceDisplay } = useCommands();
 
-const Shader = ({ modeArg, exampleArg = "submerge" }: ShaderProps) => {
+  useEffect(() => {
+   
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  const modeArg = parseInt(args?.[0] ?? "0");
+  const exampleArg = (args?.[1] as keyof typeof examples) ?? "submerge";
+
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const fragmenRef = useRef<Fragmen | null>(null);
   const [mode, setMode] = useState(modeArg ?? 0);
@@ -91,6 +96,7 @@ const Shader = ({ modeArg, exampleArg = "submerge" }: ShaderProps) => {
   const [example, setExample] = useState<keyof typeof examples>(exampleArg);
 
   useEffect(() => {
+    replaceDisplay();
     if (canvasRef.current) {
       const options = {
         target: canvasRef.current,
@@ -140,7 +146,8 @@ const Shader = ({ modeArg, exampleArg = "submerge" }: ShaderProps) => {
         fragmenRef.current = null;
       }
     };
-  }, [example]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const handleModeChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
     const lastMode = mode;
@@ -158,7 +165,7 @@ const Shader = ({ modeArg, exampleArg = "submerge" }: ShaderProps) => {
           JSON.stringify({
             componentKey: "shader",
             props: { modeArg: newMode, exampleArg: example },
-            time: new Date().toISOString(),
+            timestamp: new Date().toISOString(),
           }),
         ]);
       }
@@ -176,7 +183,7 @@ const Shader = ({ modeArg, exampleArg = "submerge" }: ShaderProps) => {
       JSON.stringify({
         componentKey: "shader",
         props: { modeArg: mode, exampleArg: newExample },
-        time: new Date().toISOString(),
+        timestamp: new Date().toISOString(),
       }),
     ]);
   };

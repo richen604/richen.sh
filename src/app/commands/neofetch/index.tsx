@@ -7,7 +7,10 @@ import safari from "@/public/safari.svg";
 import edge from "@/public/edge.svg";
 import opera from "@/public/opera.svg";
 import brave from "@/public/brave.svg";
-export { default as handleNeofetch } from "./handle";
+import React from "react";
+import UAParser from "ua-parser-js";
+import { type CommandParams } from "..";
+
 
 const handleBrowserSvg = (browser: string | undefined) => {
   switch (browser) {
@@ -31,7 +34,18 @@ const handleBrowserSvg = (browser: string | undefined) => {
   }
 };
 
-const neofetch = ({ result }: { result: UAParser.IResult }) => {
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+const Neofetch = ({ args }: CommandParams) => {
+  const [result, setResult] = React.useState<UAParser.IResult | null>(null);
+
+  React.useEffect(() => {
+    const parser = new UAParser();
+    const parsedResult = parser.getResult();
+    setResult(parsedResult);
+  }, []);
+
+  if (!result) return null;
+
   return (
     <div className="flex flex-col md:flex-row m-2">
       <div className="w-full md:w-1/3 mb-4 md:mb-0">
@@ -69,4 +83,4 @@ const neofetch = ({ result }: { result: UAParser.IResult }) => {
   );
 };
 
-export default neofetch;
+export default Neofetch;

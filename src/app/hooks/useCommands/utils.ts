@@ -2,7 +2,7 @@ import commandRegistry, {
   type Commands,
   type CommandParams,
 } from "../../commands";
-import { store, displayAtom } from "../../store/terminalAtoms";
+import { store, displayAtom } from "../../store";
 
 export const handleCommand = ({
   command,
@@ -10,10 +10,15 @@ export const handleCommand = ({
   flags,
   all,
 }: CommandParams & { command: Commands }) => {
-  const commandHandler = commandRegistry[command];
-
-  if (commandHandler) {
-    commandHandler({ args, flags, all });
+  if (command in commandRegistry) {
+    store.set(displayAtom, (prev) => [
+      ...prev,
+      JSON.stringify({
+        componentKey: command,
+        props: { args, flags, all },
+        timestamp: new Date().toISOString(),
+      }),
+    ]);
   } else {
     handleUnknown(command);
   }
@@ -23,9 +28,9 @@ export const handleUnknown = (command: string) => {
   store.set(displayAtom, (prev) => [
     ...prev,
     JSON.stringify({
-      componentKey: command,
-      props: { message: `richen.sh: command not found: ${command}` },
-      time: new Date().toISOString(),
+      componentKey: `${command}: command not found`,
+      props: { args: [] },
+      timestamp: new Date().toISOString(),
     }),
   ]);
 };

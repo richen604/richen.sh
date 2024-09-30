@@ -1,6 +1,6 @@
 import { type ReactNode } from "react";
 import { Provider } from "jotai";
-import { store } from "../store/terminalAtoms";
+import { store } from "../store";
 import React from "react";
 
 export interface TerminalStoreProviderProps {

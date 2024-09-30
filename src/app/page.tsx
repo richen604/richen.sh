@@ -4,10 +4,12 @@
 import { useEffect, useRef } from "react";
 import useCommands from "./hooks/useCommands";
 import { useAtom } from "jotai";
-import { displayAtom, renderedDisplayAtom, store } from "./store/terminalAtoms";
+import { displayAtom, type DisplayItem, inputAtom, store } from "./store";
+import { type Commands, componentMap } from "./commands";
 
 export default function Home() {
-  const [renderedDisplay] = useAtom(renderedDisplayAtom);
+  const [display] = useAtom(displayAtom);
+  const [input, setInput] = useAtom(inputAtom);
   const { handleKeyDown } = useCommands();
   const inputRef = useRef<HTMLInputElement>(null);
 
@@ -43,6 +45,7 @@ export default function Home() {
               store.set(displayAtom, [
                 JSON.stringify({
                   componentKey: "help",
+                  timestamp: new Date().toISOString(),
                 }),
               ]);
             }}
@@ -59,12 +62,30 @@ export default function Home() {
           </button>
         </div>
       </nav>
-      <div>{renderedDisplay?.length > 0 ? renderedDisplay : null}</div>
+      <div>
+        {display.map((item, index) => {
+          const { componentKey, props, timestamp } = JSON.parse(item) as DisplayItem;
+          const Component = componentMap[componentKey as Commands];
+          return (
+            <div key={index}>
+              <div className="p-2 flex justify-between items-center">
+                <span>{`> ${componentKey}`}</span>
+                <span className="text-nowrap ml-2 text-gray-500 text-xs md:text-sm lg:text-base">
+                  {new Date(timestamp).toLocaleTimeString()}
+                </span>
+              </div>
+              {Component && <Component {...props} />}
+            </div>
+          );
+        })}
+      </div>
       <div className="flex w-full min-w-0 h-10 p-2 text-sm md:text-base lg:text-lg">
         <span>&gt;</span>
         <input
           ref={inputRef}
           className="bg-transparent outline-none ml-2 min-w-0 flex-grow"
+          value={input}
+          onChange={(e) => setInput(e.target.value)}
           onKeyDown={handleKeyDown}
         />
         <span className="text-nowrap ml-2 text-xs md:text-sm lg:text-base">

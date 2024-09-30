@@ -1,7 +1,7 @@
 import React from "react";
-export { default as handleHelp } from "./handle";
+import { type CommandParams } from "..";
 
-const Help = () => {
+const Help: React.FC<CommandParams> = () => {
   return (
     <div>
       <p>Available commands:</p>
@@ -10,6 +10,7 @@ const Help = () => {
         <li>echo</li>
         <li>help</li>
         <li>neofetch</li>
+        <li>shader</li>
       </ul>
     </div>
   );

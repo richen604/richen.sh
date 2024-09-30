@@ -13,11 +13,12 @@ function ClientOnly({
   React.useEffect(() => {
     setHasMounted(true);
   }, []);
+
   if (!hasMounted) {
     return null;
   }
 
-  return <div {...delegated}>{children}</div>;
+  return <React.Fragment {...delegated}>{children}</React.Fragment>;
 }
 
 export default ClientOnly;

@@ -1,10 +1,8 @@
-import type UAParser from "ua-parser-js";
-import Echo, { handleEcho } from "./echo";
-import Help, { handleHelp } from "./help";
-import Neofetch, { handleNeofetch } from "./neofetch";
-import Shader, { type ShaderProps } from "./shader";
-import handleShader from "./shader/handle";
-import handleClear from "./clear";
+import Echo from "./echo";
+import Help from "./help";
+import Neofetch from "./neofetch";
+import Shader from "./shader";
+import Clear from "./clear";
 
 export type CommandParams = {
   args?: string[];
@@ -12,26 +10,22 @@ export type CommandParams = {
   all?: string[];
 };
 
-const commandRegistry = {
-  echo: (params?: CommandParams) => handleEcho(params ?? {}),
-  clear: (params?: CommandParams) => handleClear(params ?? {}),
-  help: () => handleHelp(),
-  neofetch: () => handleNeofetch(),
-  shader: (params?: CommandParams) => handleShader(params ?? {}),
+export const componentMap = {
+  echo: Echo,
+  help: Help,
+  neofetch: Neofetch,
+  shader: Shader,
+  clear: Clear,
 };
 
-export type Commands = keyof typeof commandRegistry;
+export type Commands = keyof typeof componentMap;
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export const componentMap: Record<string, React.FunctionComponent<any>> = {
-  help: () => <Help />,
-  echo: (props: React.PropsWithChildren<{ message: string }>) => (
-    <Echo message={props.message} />
-  ),
-  neofetch: (props: React.PropsWithChildren<{ result: UAParser.IResult }>) => (
-    <Neofetch result={props.result} />
-  ),
-  shader: (props: ShaderProps) => <Shader {...props} />,
+const commandRegistry = {
+  echo: Echo,
+  clear: Clear,
+  help: Help,
+  neofetch: Neofetch,
+  shader: Shader,
 };
 
 export default commandRegistry;

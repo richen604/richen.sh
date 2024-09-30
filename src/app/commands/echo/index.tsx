@@ -1,7 +1,8 @@
 import React from "react";
-export { default as handleEcho } from "./handle";
+import { type CommandParams } from "..";
 
-const Echo = ({ message }: { message: string }) => {
+const Echo: React.FC<CommandParams> = ({ all }) => {
+  const message = all?.join(" ") ?? "";
   return <div>{message}</div>;
 };
 
