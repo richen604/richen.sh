@@ -81,11 +81,6 @@ const ModeSelect = ({
 const Shader: React.FC<CommandParams> = ({ args })=> {
   const { replaceDisplay } = useCommands();
 
-  useEffect(() => {
-   
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
   const modeArg = parseInt(args?.[0] ?? "0");
   const exampleArg = (args?.[1] as keyof typeof examples) ?? "submerge";
 
@@ -164,7 +159,7 @@ const Shader: React.FC<CommandParams> = ({ args })=> {
         store.set(displayAtom, [
           JSON.stringify({
             componentKey: "shader",
-            props: { modeArg: newMode, exampleArg: example },
+            props: { args: [newMode, example] },
             timestamp: new Date().toISOString(),
           }),
         ]);
@@ -182,7 +177,7 @@ const Shader: React.FC<CommandParams> = ({ args })=> {
     store.set(displayAtom, [
       JSON.stringify({
         componentKey: "shader",
-        props: { modeArg: mode, exampleArg: newExample },
+        props: { args: [mode, newExample] },
         timestamp: new Date().toISOString(),
       }),
     ]);

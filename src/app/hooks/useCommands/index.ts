@@ -1,11 +1,10 @@
 import { useAtom } from 'jotai';
-import {  inputAtom, historyAtom, historyIndexAtom, displayAtom } from '../../store/';
+import { historyAtom, historyIndexAtom, displayAtom, store, fileSystemAtom } from '../../store/';
 import { parseArgsAndFlags, handleCommand } from './utils';
 import { type Commands } from '@/app/commands';
 
 const useCommands = () => {
   const [, setDisplay] = useAtom(displayAtom);
-  const [input, setInput] = useAtom(inputAtom);
   const [history, setHistory] = useAtom(historyAtom);
   const [historyIndex, setHistoryIndex] = useAtom(historyIndexAtom);
 
@@ -18,11 +17,12 @@ const useCommands = () => {
       args: parsedArgs,
       flags,
       all,
+      timestamp: new Date().toISOString(),
+      filesystem: store.get(fileSystemAtom),
     });
 
     setHistory((prev) => [...prev, commandLine]);
     setHistoryIndex(-1);
-    setInput('');
   };
 
   const clearDisplay = () => {
@@ -35,28 +35,32 @@ const useCommands = () => {
 
   const handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
     if (event.key === 'Enter') {
-      executeCommand(input);
+      executeCommand(event.currentTarget.value);
+      event.currentTarget.value = '';
+      event.currentTarget.focus();
     } else if (event.key === 'ArrowUp') {
       if (history.length > 0) {
         const newIndex = historyIndex < 0 ? history.length - 1 : Math.max(0, historyIndex - 1);
         setHistoryIndex(newIndex);
-        setInput(history[newIndex]);
+        event.currentTarget.value = history[newIndex];
       }
+      event.currentTarget.focus();
     } else if (event.key === 'ArrowDown') {
       if (historyIndex >= 0) {
         const newIndex = historyIndex + 1;
         if (newIndex < history.length) {
           setHistoryIndex(newIndex);
-          setInput(history[newIndex]);
+          event.currentTarget.value = history[newIndex];
         } else {
           setHistoryIndex(-1);
-          setInput('');
+          event.currentTarget.value = '';
         }
       }
     }
+    event.currentTarget.focus();
   };
 
-  return { handleKeyDown, input, setInput, clearDisplay, replaceDisplay };
+  return { handleKeyDown, clearDisplay, replaceDisplay };
 };
 
 export default useCommands;

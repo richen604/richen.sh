@@ -1,7 +1,8 @@
 "use client";
-import { atom, createStore } from "jotai";
+import { createStore } from "jotai";
 import { atomWithStorage, createJSONStorage } from "jotai/utils";
 import { type CommandParams } from "../commands";
+import { fileSystemAtom } from "../utils/filesystem";
 
 export type DisplayItem = {
   componentKey: string;
@@ -10,6 +11,7 @@ export type DisplayItem = {
 };
 
 export const store = createStore();
+
 
 export const displayAtom = atomWithStorage<string[]>(
   "terminal-display",
@@ -23,12 +25,10 @@ export const displayAtom = atomWithStorage<string[]>(
     }),
   ],
   createJSONStorage(),
-  {
-    getOnInit: true,
-  }
+  {getOnInit: true}
 );
-
-export const inputAtom = atomWithStorage<string>('terminal-input', '');
 
 export const historyAtom = atomWithStorage<string[]>('terminal-history', []);
 export const historyIndexAtom = atomWithStorage<number>('terminal-history-index', -1);
+
+export { fileSystemAtom };

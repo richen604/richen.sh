@@ -4,27 +4,56 @@
 import { useEffect, useRef } from "react";
 import useCommands from "./hooks/useCommands";
 import { useAtom } from "jotai";
-import { displayAtom, type DisplayItem, inputAtom, store } from "./store";
+import { displayAtom, type DisplayItem, store } from "./store";
 import { type Commands, componentMap } from "./commands";
+import React from "react";
+import { fileSystemAtom } from "./utils/filesystem";
+
+const DisplayItem = React.memo(({ item }: { item: string }) => {
+  const { componentKey, props, timestamp } = JSON.parse(item) as DisplayItem;
+  const Component = componentMap[componentKey as Commands];
+
+  return  (
+    <div className="display-item" data-key={`${componentKey}-${timestamp}`}>
+      <div className="p-2 flex justify-between items-center">
+        <span>{`> ${componentKey}${props.args ? ' ' + props.args.join(' ') : ''}`}</span>
+        <span className="text-nowrap ml-2 text-gray-500 text-xs md:text-sm lg:text-base">
+          {new Date(timestamp).toLocaleTimeString()}
+        </span>
+      </div>
+      {Component && <Component {...props} key={`${componentKey}-${timestamp}`}/>}
+    </div>
+  );
+});
+
+DisplayItem.displayName = 'DisplayItem';
 
 export default function Home() {
   const [display] = useAtom(displayAtom);
-  const [input, setInput] = useAtom(inputAtom);
   const { handleKeyDown } = useCommands();
   const inputRef = useRef<HTMLInputElement>(null);
+  const displayRef = useRef<HTMLDivElement>(null);
+  const mainRef = useRef<HTMLElement>(null);
+
+  
+  const [filesystem] = useAtom(fileSystemAtom);
 
   useEffect(() => {
-    setTimeout(() => {
-      if (inputRef.current) {
-        inputRef.current.focus();
-      }
-    }, 100); // Delay to ensure DOM is fully loaded
-  }, []);
+    if (inputRef.current) {
+      inputRef.current.focus();
+    }
+    if (displayRef.current) {
+      displayRef.current.scrollTop = displayRef.current.scrollHeight;
+    }
+    if (mainRef.current) {
+      mainRef.current.scrollTop = mainRef.current.scrollHeight;
+    }
+  }, [display]);
 
   return (
-    <main className="min-h-screen text-sm md:text-base lg:text-lg font-mono flex flex-col p-10 mb-5 overflow-y-scroll">
+    <main ref={mainRef} className="h-screen flex flex-col overflow-hidden text-sm md:text-base lg:text-lg font-mono p-10">
       <span className="comment">// this is a comment </span>
-      <nav className="flex mb-4">
+      <nav className="flex mb-4 flex-shrink-0">
         <div className="flex space-x-4 ">
           <button className="focus:bg-[#ffffff1a] hover:bg-[#ffffff1a]">
             projects
@@ -54,7 +83,9 @@ export default function Home() {
             ?
           </button>
           <button
-            onClick={() => store.set(displayAtom, [])}
+            onClick={() => {
+              store.set(displayAtom, []);
+            }}
             className="text-center w-6 h-6 focus:bg-[#ffffff1a] hover:bg-[#ffffff1a]"
             aria-label="Clear Display"
           >
@@ -62,30 +93,16 @@ export default function Home() {
           </button>
         </div>
       </nav>
-      <div>
-        {display.map((item, index) => {
-          const { componentKey, props, timestamp } = JSON.parse(item) as DisplayItem;
-          const Component = componentMap[componentKey as Commands];
-          return (
-            <div key={index}>
-              <div className="p-2 flex justify-between items-center">
-                <span>{`> ${componentKey}`}</span>
-                <span className="text-nowrap ml-2 text-gray-500 text-xs md:text-sm lg:text-base">
-                  {new Date(timestamp).toLocaleTimeString()}
-                </span>
-              </div>
-              {Component && <Component {...props} />}
-            </div>
-          );
-        })}
+      <div ref={displayRef} className="overflow-y-auto">
+        {display.map((item, index) => (
+          <DisplayItem key={index} item={item} />
+        ))}
       </div>
-      <div className="flex w-full min-w-0 h-10 p-2 text-sm md:text-base lg:text-lg">
-        <span>&gt;</span>
+      <div className="flex w-full min-w-0 h-10 p-2 text-sm md:text-base lg:text-lg flex-shrink-0">
+        <span>{filesystem.cwd.join('/')} &gt;</span>
         <input
           ref={inputRef}
           className="bg-transparent outline-none ml-2 min-w-0 flex-grow"
-          value={input}
-          onChange={(e) => setInput(e.target.value)}
           onKeyDown={handleKeyDown}
         />
         <span className="text-nowrap ml-2 text-xs md:text-sm lg:text-base">

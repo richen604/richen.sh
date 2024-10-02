@@ -9,14 +9,16 @@ export const handleCommand = ({
   args,
   flags,
   all,
+  timestamp,
+  filesystem,
 }: CommandParams & { command: Commands }) => {
   if (command in commandRegistry) {
     store.set(displayAtom, (prev) => [
       ...prev,
       JSON.stringify({
         componentKey: command,
-        props: { args, flags, all },
-        timestamp: new Date().toISOString(),
+        props: { args, flags, all, filesystem },
+        timestamp,
       }),
     ]);
   } else {
