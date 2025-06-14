@@ -47,18 +47,18 @@ const TerminalLayout: React.FC<TerminalLayoutProps> = ({
       onClick={handleMainClick}
     >
       <nav className="flex mb-4 flex-shrink-0 text-sm md:text-base lg:text-lg">
-        <div className="flex space-x-4 ">
+        <div className="flex space-x-1 ">
           <Link
             prefetch
             href="/projects"
-            className="focus:bg-[#ffffff1a] hover:bg-[#ffffff1a] cursor-pointer"
+            className="flex items-center justify-center px-1 rounded-md focus:bg-[#ffffff1a] hover:bg-[#ffffff1a] cursor-pointer"
           >
             projects
           </Link>
           <Link
             prefetch
             href="/contact"
-            className="focus:bg-[#ffffff1a] hover:bg-[#ffffff1a] cursor-pointer"
+            className="flex items-center justify-center px-1 rounded-md focus:bg-[#ffffff1a] hover:bg-[#ffffff1a] cursor-pointer"
           >
             contact
           </Link>
@@ -68,7 +68,7 @@ const TerminalLayout: React.FC<TerminalLayoutProps> = ({
             <Link
               prefetch
               href="/"
-              className="focus:bg-[#ffffff1a] hover:bg-[#ffffff1a] cursor-pointer"
+              className="flex items-center justify-center px-1 rounded-md focus:bg-[#ffffff1a] hover:bg-[#ffffff1a] cursor-pointer"
             >
               ↩ back
             </Link>
@@ -84,7 +84,7 @@ const TerminalLayout: React.FC<TerminalLayoutProps> = ({
                     }),
                   ]);
                 }}
-                className="flex items-center justify-center w-8 h-8 mr-2 rounded-md focus:bg-[#ffffff1a] hover:bg-[#ffffff1a] cursor-pointer transition-colors"
+                className="flex items-center justify-center w-6 h-6 mr-2 rounded-md focus:bg-[#ffffff1a] hover:bg-[#ffffff1a] cursor-pointer transition-colors"
                 aria-label="Help"
               >
                 ?
@@ -93,7 +93,7 @@ const TerminalLayout: React.FC<TerminalLayoutProps> = ({
                 onClick={() => {
                   store.set(displayAtom, []);
                 }}
-                className="flex items-center justify-center w-8 h-8 rounded-md focus:bg-[#ffffff1a] hover:bg-[#ffffff1a] cursor-pointer transition-colors"
+                className="flex items-center justify-center w-6 h-6 rounded-md focus:bg-[#ffffff1a] hover:bg-[#ffffff1a] cursor-pointer transition-colors"
                 aria-label="Clear Display"
               >
                 ×
