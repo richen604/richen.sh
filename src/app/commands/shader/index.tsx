@@ -78,7 +78,7 @@ const ModeSelect = ({
   );
 };
 
-const Shader: React.FC<CommandParams> = ({ args })=> {
+const Shader: React.FC<CommandParams> = ({ args }) => {
   const { replaceDisplay } = useCommands();
 
   const modeArg = parseInt(args?.[0] ?? "0");
@@ -138,10 +138,45 @@ const Shader: React.FC<CommandParams> = ({ args })=> {
 
     return () => {
       if (fragmenRef.current) {
+        // Stop the animation loop
+        fragmenRef.current.run = false;
+        fragmenRef.current.animation = false;
+
+        // Remove event listeners
+        if (fragmenRef.current.eventTarget) {
+          // TODO: remove this after migrating shader to typescript
+          // eslint-disable-next-line @typescript-eslint/unbound-method
+          fragmenRef.current.eventTarget.removeEventListener("pointermove", fragmenRef.current.mouseMove, false);
+        }
+        // eslint-disable-next-line @typescript-eslint/unbound-method
+        window.removeEventListener("keydown", fragmenRef.current.keyDown, false);
+        // eslint-disable-next-line @typescript-eslint/unbound-method
+        window.removeEventListener("resize", fragmenRef.current.rect, false);
+
+        // Clean up WebGL resources
+        if (fragmenRef.current.gl) {
+          // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
+          fragmenRef.current.resetBuffer(fragmenRef.current.fFront);
+          // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
+          fragmenRef.current.resetBuffer(fragmenRef.current.fBack);
+          // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
+          fragmenRef.current.resetBuffer(fragmenRef.current.fTemp);
+
+          if (fragmenRef.current.program) {
+            fragmenRef.current.gl.deleteProgram(fragmenRef.current.program);
+          }
+          if (fragmenRef.current.postProgram) {
+            fragmenRef.current.gl.deleteProgram(fragmenRef.current.postProgram);
+          }
+          if (fragmenRef.current.post300Program) {
+            fragmenRef.current.gl.deleteProgram(fragmenRef.current.post300Program);
+          }
+        }
+
         fragmenRef.current = null;
       }
     };
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const handleModeChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
