@@ -1,10 +1,7 @@
 import type { Metadata } from "next";
-import { Source_Code_Pro } from "next/font/google";
 import localFont from "next/font/local";
 import "./globals.css";
 import { TerminalStoreProvider } from "./providers/TerminalStoreProvider";
-
-const source_code_pro = Source_Code_Pro({ subsets: ["latin"] });
 
 const myFont = localFont({
   src: "../../public/Gohu.ttf",
