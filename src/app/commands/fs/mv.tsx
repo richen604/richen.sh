@@ -1,6 +1,6 @@
 import React from 'react';
 import { type CommandParams } from '..';
-import { mv } from '../../utils/filesystem';
+import { mv, updateFileSystemStore } from '../../utils/filesystem';
 
 const Mv: React.FC<CommandParams> = ({ args, filesystem }) => {
   if (!args || args.length < 2) {
@@ -8,7 +8,8 @@ const Mv: React.FC<CommandParams> = ({ args, filesystem }) => {
   }
 
   try {
-    mv(filesystem, args[0], args[1]);
+    const newFs = mv(filesystem, args[0], args[1]);
+    updateFileSystemStore(newFs);
     return <div>Moved {args[0]} to {args[1]}</div>;
   } catch (error) {
     return <div>{(error as Error).message}</div>;

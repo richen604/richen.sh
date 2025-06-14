@@ -8,6 +8,7 @@
   - [ ] <https://nextjs.org/docs/app/guides/mdx> integrated with terminal styles
   - [ ] art generator, ascii
 - [ ] rename neofetch fastfetch
+- [ ] tab completion?
 - [ ] editor integration with filesystem, vim nvim commands
 - [ ] themes? inherit base16? compatible with editor?
 - [ ] settings menu?

@@ -1,6 +1,6 @@
 import React from 'react';
 import { type CommandParams } from '..';
-import { cp } from '../../utils/filesystem';
+import { cp, updateFileSystemStore } from '../../utils/filesystem';
 
 const Cp: React.FC<CommandParams> = ({ args, filesystem }) => {
   if (!args || args.length < 2) {
@@ -8,7 +8,8 @@ const Cp: React.FC<CommandParams> = ({ args, filesystem }) => {
   }
 
   try {
-    cp(filesystem, args[0], args[1]);
+    const newFs = cp(filesystem, args[0], args[1]);
+    updateFileSystemStore(newFs);
     return <div>Copied {args[0]} to {args[1]}</div>;
   } catch (error) {
     return <div>{(error as Error).message}</div>;

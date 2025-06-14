@@ -1,6 +1,6 @@
 import React from 'react';
 import { type CommandParams } from '..';
-import { mkdir } from '../../utils/filesystem';
+import { mkdir, updateFileSystemStore } from '../../utils/filesystem';
 
 const Mkdir: React.FC<CommandParams> = ({ args, filesystem }) => {
   if (!args || args.length === 0) {
@@ -8,7 +8,8 @@ const Mkdir: React.FC<CommandParams> = ({ args, filesystem }) => {
   }
 
   try {
-    mkdir(filesystem, args[0]);
+    const newFs = mkdir(filesystem, args[0]);
+    updateFileSystemStore(newFs);
     return <div>Directory created: {args[0]}</div>;
   } catch (error) {
     return <div>{(error as Error).message}</div>;
