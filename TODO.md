@@ -18,6 +18,8 @@
   - [ ] shell prompt
   - [ ] user change
 - [ ] fragment.js to typescript
+- [ ] filesystem updates should have a hook, and documentation. exactly like the current useeffect implementation. maybe it should be a hook?
+- [ ] refactor utils to store as its another store?
 
 ## potential features
 
