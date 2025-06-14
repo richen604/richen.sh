@@ -46,7 +46,7 @@ const TerminalLayout: React.FC<TerminalLayoutProps> = ({
       className="h-screen flex flex-col overflow-hidden text-sm md:text-base lg:text-lg font-mono p-10 leading-tight"
       onClick={handleMainClick}
     >
-      <nav className="flex mb-4 flex-shrink-0">
+      <nav className="flex mb-4 flex-shrink-0 text-sm md:text-base lg:text-lg">
         <div className="flex space-x-4 ">
           <Link
             prefetch
@@ -74,7 +74,7 @@ const TerminalLayout: React.FC<TerminalLayoutProps> = ({
             </Link>
           )}
           {showCLI && (
-            <>
+            <div className="flex flex-shrink">
               <button
                 onClick={() => {
                   store.set(displayAtom, [
@@ -84,7 +84,8 @@ const TerminalLayout: React.FC<TerminalLayoutProps> = ({
                     }),
                   ]);
                 }}
-                className="text-center w-4 h-4 focus:bg-[#ffffff1a] hover:bg-[#ffffff1a]"
+                className="flex items-center justify-center w-8 h-8 mr-2 rounded-md focus:bg-[#ffffff1a] hover:bg-[#ffffff1a] cursor-pointer transition-colors"
+                aria-label="Help"
               >
                 ?
               </button>
@@ -92,12 +93,12 @@ const TerminalLayout: React.FC<TerminalLayoutProps> = ({
                 onClick={() => {
                   store.set(displayAtom, []);
                 }}
-                className="text-center w-4 h-4 focus:bg-[#ffffff1a] hover:bg-[#ffffff1a]"
+                className="flex items-center justify-center w-8 h-8 rounded-md focus:bg-[#ffffff1a] hover:bg-[#ffffff1a] cursor-pointer transition-colors"
                 aria-label="Clear Display"
               >
-                x
+                ×
               </button>
-            </>
+            </div>
           )}
         </div>
       </nav>
