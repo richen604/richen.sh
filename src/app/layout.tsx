@@ -21,9 +21,9 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <body className={source_code_pro.className}>
-          <ClientOnly>
+        <ClientOnly>
           <TerminalStoreProvider>{children}</TerminalStoreProvider>
-          </ClientOnly>
+        </ClientOnly>
       </body>
     </html>
   );

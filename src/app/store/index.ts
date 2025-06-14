@@ -25,7 +25,7 @@ export const displayAtom = atomWithStorage<string[]>(
     }),
   ],
   createJSONStorage(),
-  {getOnInit: true}
+  { getOnInit: true }
 );
 
 export const historyAtom = atomWithStorage<string[]>('terminal-history', []);

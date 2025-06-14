@@ -4,6 +4,8 @@ import Neofetch from "./neofetch";
 import Shader from "./shader";
 import Clear from "./clear";
 import Fs from "./fs";
+import Projects from "./projects";
+import Contact from "./contact";
 import { type FileSystem } from '../utils/filesystem';
 
 export type CommandParams = {
@@ -20,6 +22,8 @@ export const componentMap = {
   neofetch: Neofetch,
   shader: Shader,
   clear: Clear,
+  projects: Projects,
+  contact: Contact,
   cat: Fs.cat,
   cd: Fs.cd,
   mkdir: Fs.mkdir,

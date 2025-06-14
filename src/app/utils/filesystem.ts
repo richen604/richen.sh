@@ -50,7 +50,7 @@ const getMimetype = (filename: string): string => {
     case 'html': return 'text/html';
     case 'css': return 'text/css';
     case 'png': return 'image/png';
-    case 'jpg':
+    case 'jpg': return 'image/jpeg';
     case 'jpeg': return 'image/jpeg';
     case 'gif': return 'image/gif';
     case 'pdf': return 'application/pdf';
@@ -101,7 +101,7 @@ const updateFileSystem = (fs: FileSystem, updater: (draft: FileSystem) => void):
   store.set(fileSystemAtom, newFs);
   return newFs;
 };
- 
+
 export const uint8ArrayToBase64 = (uint8Array: Uint8Array): string => {
   return Buffer.from(uint8Array).toString('base64');
 };
@@ -121,18 +121,18 @@ export const blobToUint8Array = async (blob: Blob): Promise<Uint8Array> => {
 };
 
 export const getFileAsBlob = (fs: FileSystem, path: string): Blob => {
-    const resolvedPath = resolvePath(fs, path);
-    const node = getNodeAtPath(fs, resolvedPath);
-    if (node && node.type === 'file' && node.content !== undefined) {
-      const mimeType = node.mimetype ?? 'application/octet-stream';
-      if (typeof node.content === 'string') {
-        return new Blob([node.content], { type: mimeType });
-      } else {
-        return uint8ArrayToBlob(node.content, mimeType);
-      }
+  const resolvedPath = resolvePath(fs, path);
+  const node = getNodeAtPath(fs, resolvedPath);
+  if (node && node.type === 'file' && node.content !== undefined) {
+    const mimeType = node.mimetype ?? 'application/octet-stream';
+    if (typeof node.content === 'string') {
+      return new Blob([node.content], { type: mimeType });
+    } else {
+      return uint8ArrayToBlob(node.content, mimeType);
     }
-    throw new Error('File not found or is not readable');
-  };
+  }
+  throw new Error('File not found or is not readable');
+};
 
 // Filesystem commands
 export const cd = (fs: FileSystem, path: string): FileSystem => {
@@ -169,11 +169,11 @@ export const ls = (fs: FileSystem, path?: string): string => {
   if (node && node.type === 'directory' && node.children) {
     const entries = Object.entries(node.children);
     const maxNameLength = Math.max(...entries.map(([name]) => name.length));
-    
+
     return entries.map(([name, childNode]) => {
       const emoji = childNode.type === 'directory' ? '📁' : getFileEmoji(childNode.mimetype ?? 'application/octet-stream');
       const paddedName = name.padEnd(maxNameLength + 2);
-      return `${emoji}  ${paddedName}`;
+      return `${emoji} ${paddedName}`;
     }).join('\n');
   }
   throw new Error('Directory not found');
@@ -194,7 +194,7 @@ export const mkdir = (fs: FileSystem, path: string): FileSystem => {
   const parentPath = resolvedPath.slice(0, -1);
   const dirName = resolvedPath[resolvedPath.length - 1];
   const parentNode = getNodeAtPath(fs, parentPath);
-  
+
   if (parentNode && parentNode.type === 'directory') {
     return updateFileSystem(fs, (draft) => {
       const draftParentNode = getNodeAtPath(draft, parentPath)!;
@@ -216,7 +216,7 @@ export const touch = (fs: FileSystem, path: string, content?: string | Uint8Arra
   const parentPath = resolvedPath.slice(0, -1);
   const fileName = resolvedPath[resolvedPath.length - 1];
   const parentNode = getNodeAtPath(fs, parentPath);
-  
+
   if (parentNode && parentNode.type === 'directory') {
     return updateFileSystem(fs, (draft) => {
       const draftParentNode = getNodeAtPath(draft, parentPath)!;
@@ -226,8 +226,8 @@ export const touch = (fs: FileSystem, path: string, content?: string | Uint8Arra
       if (draftParentNode.children[fileName]) {
         throw new Error('File already exists');
       }
-      draftParentNode.children[fileName] = { 
-        type: 'file', 
+      draftParentNode.children[fileName] = {
+        type: 'file',
         content: content ?? '',
         mimetype: getMimetype(fileName)
       };
@@ -241,7 +241,7 @@ export const rm = (fs: FileSystem, path: string): FileSystem => {
   const parentPath = resolvedPath.slice(0, -1);
   const name = resolvedPath[resolvedPath.length - 1];
   const parentNode = getNodeAtPath(fs, parentPath);
-  
+
   if (parentNode && parentNode.type === 'directory' && parentNode.children) {
     return updateFileSystem(fs, (draft) => {
       const draftParentNode = getNodeAtPath(draft, parentPath)!;
@@ -261,16 +261,16 @@ export const mv = (fs: FileSystem, sourcePath: string, destPath: string): FileSy
   const sourceName = resolvedSourcePath[resolvedSourcePath.length - 1];
   const destParentPath = resolvedDestPath.slice(0, -1);
   const destName = resolvedDestPath[resolvedDestPath.length - 1];
-  
+
   const sourceParentNode = getNodeAtPath(fs, sourceParentPath);
   const destParentNode = getNodeAtPath(fs, destParentPath);
-  
+
   if (sourceParentNode && sourceParentNode.type === 'directory' && sourceParentNode.children &&
-      destParentNode && destParentNode.type === 'directory') {
+    destParentNode && destParentNode.type === 'directory') {
     return updateFileSystem(fs, (draft) => {
       const draftSourceParentNode = getNodeAtPath(draft, sourceParentPath)!;
       const draftDestParentNode = getNodeAtPath(draft, destParentPath)!;
-      
+
       if (!draftSourceParentNode.children?.[sourceName]) {
         throw new Error('Source file or directory not found');
       }
@@ -294,12 +294,12 @@ export const cp = (fs: FileSystem, sourcePath: string, destPath: string): FileSy
   const destParentPath = resolvedDestPath.slice(0, -1);
   const destName = resolvedDestPath[resolvedDestPath.length - 1];
   const destParentNode = getNodeAtPath(fs, destParentPath);
-  
+
   if (sourceNode && destParentNode && destParentNode.type === 'directory') {
     return updateFileSystem(fs, (draft) => {
       const draftSourceNode = getNodeAtPath(draft, resolvedSourcePath);
       const draftDestParentNode = getNodeAtPath(draft, destParentPath)!;
-      
+
       if (!draftDestParentNode.children) {
         draftDestParentNode.children = {};
       }
