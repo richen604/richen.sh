@@ -3,7 +3,7 @@ import { type CommandParams } from "..";
 
 const Help: React.FC<CommandParams> = () => {
   return (
-    <div>
+    <div className="leading-tight">
       <p>Available commands:</p>
       <ul>
         <li>clear - Clear the terminal screen</li>
