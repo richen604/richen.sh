@@ -43,7 +43,7 @@ const TerminalLayout: React.FC<TerminalLayoutProps> = ({
   return (
     <main
       ref={mainRef}
-      className="h-screen flex flex-col overflow-hidden text-sm md:text-base lg:text-lg font-mono p-10"
+      className="h-screen flex flex-col overflow-hidden text-sm md:text-base lg:text-lg font-mono p-10 leading-tight"
       onClick={handleMainClick}
     >
       <nav className="flex mb-4 flex-shrink-0">
