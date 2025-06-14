@@ -8,7 +8,7 @@ import edge from "@/public/edge.svg";
 import opera from "@/public/opera.svg";
 import brave from "@/public/brave.svg";
 import React from "react";
-import UAParser from "ua-parser-js";
+import { UAParser } from "ua-parser-js";
 import { type CommandParams } from "..";
 
 
