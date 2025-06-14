@@ -1,19 +1,25 @@
 import React from 'react';
 import { type CommandParams } from '..';
-import { touch, updateFileSystemStore } from '../../utils/filesystem';
+import { touch } from '../../utils/filesystem';
 
 const Touch: React.FC<CommandParams> = ({ args, filesystem }) => {
-  if (!args || args.length === 0) {
-    return <div>Usage: touch &lt;file&gt;</div>;
-  }
+  const [result, setResult] = React.useState<React.ReactNode>(null);
 
-  try {
-    const newFs = touch(filesystem, args[0]);
-    updateFileSystemStore(newFs);
-    return <div>File created: {args[0]}</div>;
-  } catch (error) {
-    return <div>{(error as Error).message}</div>;
-  }
+  React.useEffect(() => {
+    if (!args || args.length === 0) {
+      setResult(<div>Usage: touch &lt;file&gt;</div>);
+      return;
+    }
+
+    try {
+      touch(filesystem, args[0]);
+      setResult(<div>File created: {args[0]}</div>);
+    } catch (error) {
+      setResult(<div>{(error as Error).message}</div>);
+    }
+  }, [args, filesystem]);
+
+  return result;
 };
 
 export default Touch;

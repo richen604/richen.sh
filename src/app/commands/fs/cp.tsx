@@ -1,19 +1,25 @@
 import React from 'react';
 import { type CommandParams } from '..';
-import { cp, updateFileSystemStore } from '../../utils/filesystem';
+import { cp } from '../../utils/filesystem';
 
 const Cp: React.FC<CommandParams> = ({ args, filesystem }) => {
-  if (!args || args.length < 2) {
-    return <div>Usage: cp &lt;source&gt; &lt;destination&gt;</div>;
-  }
+  const [result, setResult] = React.useState<React.ReactNode>(null);
 
-  try {
-    const newFs = cp(filesystem, args[0], args[1]);
-    updateFileSystemStore(newFs);
-    return <div>Copied {args[0]} to {args[1]}</div>;
-  } catch (error) {
-    return <div>{(error as Error).message}</div>;
-  }
+  React.useEffect(() => {
+    if (!args || args.length < 2) {
+      setResult(<div>Usage: cp &lt;source&gt; &lt;destination&gt;</div>);
+      return;
+    }
+
+    try {
+      cp(filesystem, args[0], args[1]);
+      setResult(<div>Copied {args[0]} to {args[1]}</div>);
+    } catch (error) {
+      setResult(<div>{(error as Error).message}</div>);
+    }
+  }, [args, filesystem]);
+
+  return result;
 };
 
 export default Cp;

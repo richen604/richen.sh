@@ -1,19 +1,25 @@
 import React from 'react';
 import { type CommandParams } from '..';
-import { mkdir, updateFileSystemStore } from '../../utils/filesystem';
+import { mkdir } from '../../utils/filesystem';
 
 const Mkdir: React.FC<CommandParams> = ({ args, filesystem }) => {
-  if (!args || args.length === 0) {
-    return <div>Usage: mkdir &lt;directory&gt;</div>;
-  }
+  const [result, setResult] = React.useState<React.ReactNode>(null);
 
-  try {
-    const newFs = mkdir(filesystem, args[0]);
-    updateFileSystemStore(newFs);
-    return <div>Directory created: {args[0]}</div>;
-  } catch (error) {
-    return <div>{(error as Error).message}</div>;
-  }
+  React.useEffect(() => {
+    if (!args || args.length === 0) {
+      setResult(<div>Usage: mkdir &lt;directory&gt;</div>);
+      return;
+    }
+
+    try {
+      mkdir(filesystem, args[0]);
+      setResult(<div>Directory created: {args[0]}</div>);
+    } catch (error) {
+      setResult(<div>{(error as Error).message}</div>);
+    }
+  }, [args, filesystem]);
+
+  return result;
 };
 
 export default Mkdir;

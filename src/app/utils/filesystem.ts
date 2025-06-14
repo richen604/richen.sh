@@ -95,17 +95,11 @@ const resolvePath = (fs: FileSystem, path: string): string[] => {
   return resolvedPath;
 };
 
-// pure function that creates and returns a modified copy of the filesystem
 const updateFileSystem = (fs: FileSystem, updater: (draft: FileSystem) => void): FileSystem => {
   const newFs = JSON.parse(JSON.stringify(fs)) as FileSystem;
   updater(newFs);
-  return newFs;
-};
-
-// update the filesystem store with the new filesystem
-// must becalled by commands that modify the filesystem
-export const updateFileSystemStore = (newFs: FileSystem): void => {
   store.set(fileSystemAtom, newFs);
+  return newFs;
 };
 
 export const uint8ArrayToBase64 = (uint8Array: Uint8Array): string => {

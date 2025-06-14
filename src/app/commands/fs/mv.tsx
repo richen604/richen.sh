@@ -1,19 +1,25 @@
 import React from 'react';
 import { type CommandParams } from '..';
-import { mv, updateFileSystemStore } from '../../utils/filesystem';
+import { mv } from '../../utils/filesystem';
 
 const Mv: React.FC<CommandParams> = ({ args, filesystem }) => {
-  if (!args || args.length < 2) {
-    return <div>Usage: mv &lt;source&gt; &lt;destination&gt;</div>;
-  }
+  const [result, setResult] = React.useState<React.ReactNode>(null);
 
-  try {
-    const newFs = mv(filesystem, args[0], args[1]);
-    updateFileSystemStore(newFs);
-    return <div>Moved {args[0]} to {args[1]}</div>;
-  } catch (error) {
-    return <div>{(error as Error).message}</div>;
-  }
+  React.useEffect(() => {
+    if (!args || args.length < 2) {
+      setResult(<div>Usage: mv &lt;source&gt; &lt;destination&gt;</div>);
+      return;
+    }
+
+    try {
+      mv(filesystem, args[0], args[1]);
+      setResult(<div>Moved {args[0]} to {args[1]}</div>);
+    } catch (error) {
+      setResult(<div>{(error as Error).message}</div>);
+    }
+  }, [args, filesystem]);
+
+  return result;
 };
 
 export default Mv;

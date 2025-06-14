@@ -6,7 +6,7 @@ const Ls: React.FC<CommandParams> = ({ args, filesystem }) => {
   try {
     const files = ls(filesystem, args?.[0]);
     return (
-      <pre className="whitespace-pre-wrap">
+      <pre className="whitespace-pre-wrap font-mono">
         {files}
       </pre>
     );
