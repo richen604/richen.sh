@@ -11,7 +11,7 @@ const useCommands = () => {
   const executeCommand = (commandLine: string) => {
     const [commandName, ...args] = commandLine.trim().split(' ');
     const { args: parsedArgs, flags, all } = parseArgsAndFlags(args);
-    
+
     handleCommand({
       command: commandName as Commands,
       args: parsedArgs,
@@ -31,6 +31,18 @@ const useCommands = () => {
 
   const replaceDisplay = () => {
     setDisplay(prev => [prev[prev.length - 1]]);
+  };
+
+  const resetDisplay = () => {
+    setDisplay([
+      JSON.stringify({
+        componentKey: "help",
+        timestamp: new Date().toISOString(),
+        props: {
+          all: [],
+        },
+      }),
+    ]);
   };
 
   const handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
@@ -60,7 +72,7 @@ const useCommands = () => {
     event.currentTarget.focus();
   };
 
-  return { handleKeyDown, clearDisplay, replaceDisplay };
+  return { handleKeyDown, clearDisplay, replaceDisplay, resetDisplay };
 };
 
 export default useCommands;
