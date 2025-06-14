@@ -15,7 +15,6 @@ const TerminalLayout: React.FC<TerminalLayoutProps> = ({
   children,
   showCLI = true,
   onKeyDown,
-  title = "richen.sh"
 }) => {
   const [display] = useAtom(displayAtom);
   const inputRef = useRef<HTMLInputElement>(null);

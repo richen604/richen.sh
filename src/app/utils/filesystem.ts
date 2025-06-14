@@ -198,9 +198,7 @@ export const mkdir = (fs: FileSystem, path: string): FileSystem => {
   if (parentNode && parentNode.type === 'directory') {
     return updateFileSystem(fs, (draft) => {
       const draftParentNode = getNodeAtPath(draft, parentPath)!;
-      if (!draftParentNode.children) {
-        draftParentNode.children = {};
-      }
+      draftParentNode.children ??= {};
       if (draftParentNode.children[dirName]) {
         throw new Error('Directory already exists');
       }
@@ -220,9 +218,7 @@ export const touch = (fs: FileSystem, path: string, content?: string | Uint8Arra
   if (parentNode && parentNode.type === 'directory') {
     return updateFileSystem(fs, (draft) => {
       const draftParentNode = getNodeAtPath(draft, parentPath)!;
-      if (!draftParentNode.children) {
-        draftParentNode.children = {};
-      }
+      draftParentNode.children ??= {};
       if (draftParentNode.children[fileName]) {
         throw new Error('File already exists');
       }
@@ -274,9 +270,7 @@ export const mv = (fs: FileSystem, sourcePath: string, destPath: string): FileSy
       if (!draftSourceParentNode.children?.[sourceName]) {
         throw new Error('Source file or directory not found');
       }
-      if (!draftDestParentNode.children) {
-        draftDestParentNode.children = {};
-      }
+      draftDestParentNode.children ??= {};
       if (draftDestParentNode.children[destName]) {
         throw new Error('Destination already exists');
       }
@@ -300,9 +294,7 @@ export const cp = (fs: FileSystem, sourcePath: string, destPath: string): FileSy
       const draftSourceNode = getNodeAtPath(draft, resolvedSourcePath);
       const draftDestParentNode = getNodeAtPath(draft, destParentPath)!;
 
-      if (!draftDestParentNode.children) {
-        draftDestParentNode.children = {};
-      }
+      draftDestParentNode.children ??= {};
       if (draftDestParentNode.children[destName]) {
         throw new Error('Destination already exists');
       }
