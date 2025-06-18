@@ -35,7 +35,7 @@ const TerminalLayout: React.FC<TerminalLayoutProps> = ({
   }, [display, showCLI]);
 
   const handleMainClick = (e: React.MouseEvent) => {
-    if (showCLI && inputRef.current && (e.target === mainRef.current || e.target === displayRef.current)) {
+    if (showCLI && inputRef.current) {
       inputRef.current.focus();
     }
   };
