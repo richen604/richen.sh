@@ -17,8 +17,6 @@ export const metadata: Metadata = {
   description: "rm -rf /",
 };
 
-console.log(myFont);
-
 export default function RootLayout({
   children,
 }: Readonly<{
