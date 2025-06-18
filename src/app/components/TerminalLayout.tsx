@@ -105,7 +105,7 @@ const TerminalLayout: React.FC<TerminalLayoutProps> = ({
 
       <div
         ref={displayRef}
-        className="overflow-y-auto"
+        className="overflow-y-auto scrollbar-thin"
         onClick={handleMainClick}
       >
         {children}
@@ -132,7 +132,12 @@ const TerminalLayout: React.FC<TerminalLayoutProps> = ({
             placeholder=""
           />
           <span className="text-nowrap ml-2 text-xs md:text-sm lg:text-base opacity-60">
-            {new Date().toLocaleTimeString()}
+            {new Date().toLocaleTimeString('en-US', {
+              hour12: false,
+              hour: '2-digit',
+              minute: '2-digit',
+              second: '2-digit'
+            })}
           </span>
         </div>
       )}
