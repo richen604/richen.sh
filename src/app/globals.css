@@ -48,6 +48,11 @@ body {
   }
 }
 
+.scrollbar-thin {
+  /* Firefox */
+  scrollbar-width: auto;
+  scrollbar-color: var(--scanline-color) transparent;
+}
 
 ::-moz-selection {
   background: var(--scanline-color);
