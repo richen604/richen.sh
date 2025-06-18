@@ -49,44 +49,14 @@ const ExampleSelect = ({
   );
 };
 
-const ModeSelect = ({
-  onModeChange,
-  defaultMode,
-}: {
-  onModeChange: (event: React.ChangeEvent<HTMLSelectElement>) => void;
-  defaultMode: number;
-}) => {
-  return (
-    <select
-      className="w-auto dark:bg-gray-800 dark:text-white"
-      onChange={onModeChange}
-      value={defaultMode}
-    >
-      <option value="0">classic</option>
-      <option value="1">geek</option>
-      <option value="2">geeker</option>
-      <option value="3">geekest</option>
-      <option value="4">classic (300 es)</option>
-      <option value="5">geek (300 es)</option>
-      <option value="6">geeker (300 es)</option>
-      <option value="7">geekest (300 es)</option>
-      <option value="8">classic (MRT)</option>
-      <option value="9">geek (MRT)</option>
-      <option value="10">geeker (MRT)</option>
-      <option value="11">geekest (MRT)</option>
-    </select>
-  );
-};
 
 const Shader: React.FC<CommandParams> = ({ args }) => {
   const { replaceDisplay } = useCommands();
 
-  const modeArg = parseInt(args?.[0] ?? "0");
-  const exampleArg = (args?.[1] as keyof typeof examples) ?? "submerge";
+  const exampleArg = (args?.[0] as keyof typeof examples) ?? "submerge";
 
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const fragmenRef = useRef<Fragmen | null>(null);
-  const [mode, setMode] = useState(modeArg ?? 0);
   const [msg, setMsg] = useState("");
   const [example, setExample] = useState<keyof typeof examples>(exampleArg);
 
@@ -117,7 +87,6 @@ const Shader: React.FC<CommandParams> = ({ args }) => {
           const success = await tryRender(mode);
 
           if (success) {
-            setMode(mode);
             break;
           }
         }
@@ -179,28 +148,6 @@ const Shader: React.FC<CommandParams> = ({ args }) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const handleModeChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
-    const lastMode = mode;
-    const newMode = parseInt(event.target.value);
-    if (fragmenRef.current) {
-      fragmenRef.current.mode = newMode;
-      fragmenRef.current.render(fragmenRef.current.FS);
-
-      if (!fragmenRef.current.run) {
-        fragmenRef.current.mode = lastMode;
-        fragmenRef.current.render(fragmenRef.current.FS);
-      } else {
-        setMode(newMode);
-        store.set(displayAtom, [
-          JSON.stringify({
-            componentKey: "shader",
-            props: { args: [newMode, example] },
-            timestamp: new Date().toISOString(),
-          }),
-        ]);
-      }
-    }
-  };
 
   const handleExampleChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
     if (!fragmenRef.current) {
@@ -212,11 +159,15 @@ const Shader: React.FC<CommandParams> = ({ args }) => {
     store.set(displayAtom, [
       JSON.stringify({
         componentKey: "shader",
-        props: { args: [mode, newExample] },
+        props: { args: [newExample] },
         timestamp: new Date().toISOString(),
       }),
     ]);
   };
+
+  if (!examples[example]) {
+    return <div>Example not found</div>;
+  }
 
   return (
     <>
@@ -241,7 +192,6 @@ const Shader: React.FC<CommandParams> = ({ args }) => {
           </div>
         )}
         <div className="flex flex-row place-self-start gap-2">
-          <ModeSelect onModeChange={handleModeChange} defaultMode={mode} />
           <ExampleSelect
             onExampleChange={handleExampleChange}
             defaultExample={example}

@@ -36,7 +36,13 @@ const TerminalLayout: React.FC<TerminalLayoutProps> = ({
 
   const handleMainClick = (e: React.MouseEvent) => {
     if (showCLI && inputRef.current) {
-      inputRef.current.focus();
+      // Don't focus if clicking on interactive elements
+      const target = e.target as HTMLElement;
+      const isInteractive = target.closest('button, select, input, textarea, a, [role="button"], [role="menu"], [role="menuitem"]');
+
+      if (!isInteractive) {
+        inputRef.current.focus();
+      }
     }
   };
 
