@@ -43,10 +43,10 @@ const TerminalLayout: React.FC<TerminalLayoutProps> = ({
   return (
     <main
       ref={mainRef}
-      className="h-screen flex flex-col overflow-hidden text-sm md:text-base lg:text-lg font-mono p-10 leading-tight"
+      className="h-screen flex flex-col overflow-hidden text-sm md:text-base lg:text-lg font-mono p-2 leading-tight"
       onClick={handleMainClick}
     >
-      <nav className="flex mb-4 flex-shrink-0 text-sm md:text-base lg:text-lg">
+      <nav className="flex pb-2 flex-shrink-0 text-sm md:text-base lg:text-lg">
         <div className="flex space-x-1 ">
           <Link
             prefetch
