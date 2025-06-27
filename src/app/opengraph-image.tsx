@@ -40,7 +40,7 @@ export default async function Image() {
             left: 0,
             right: 0,
             bottom: 0,
-            backgroundImage: 'repeating-linear-gradient(to bottom, rgba(255, 255, 255, 0.102) 0px, rgba(255, 255, 255, 0.102) 1px, transparent 1px, transparent 2px)',
+            backgroundImage: 'repeating-linear-gradient(to bottom, rgba(255, 255, 255, 0.03) 0px, rgba(255, 255, 255, 0.03) 1px, transparent 1px, transparent 3px)',
           }}
         />
 
@@ -53,16 +53,16 @@ export default async function Image() {
             zIndex: 1,
           }}
         >
-          <span style={{ color: '#888', marginRight: 20 }}>&gt;</span>
-          <span>richen.sh</span>
+          <span style={{ color: '#888', marginRight: 20, fontSize: 90 }}>&gt;</span>
+          <span style={{ fontSize: 90 }}>richen.sh</span>
         </div>
 
         {/* Subtitle */}
         <div
           style={{
-            fontSize: 24,
+            fontSize: 36,
             color: '#888',
-            marginTop: 20,
+            marginTop: 30,
             textShadow: '0 0 1px rgba(255, 255, 255, 0.5)',
             zIndex: 1,
           }}
