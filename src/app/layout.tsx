@@ -15,6 +15,12 @@ import ClientOnly from "./hooks/ClientWrapper";
 export const metadata: Metadata = {
   title: "richen.sh",
   description: "rm -rf /",
+  metadataBase: new URL('https://richen.sh'),
+  openGraph: {
+    title: "richen.sh",
+    description: "rm -rf /",
+    images: ['/api/og'],
+  },
 };
 
 export default function RootLayout({
