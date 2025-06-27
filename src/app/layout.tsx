@@ -10,7 +10,6 @@ const myFont = localFont({
 });
 
 import React from "react";
-import ClientOnly from "./hooks/ClientWrapper";
 
 export const metadata: Metadata = {
   title: "richen.sh",
@@ -19,7 +18,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: "richen.sh",
     description: "rm -rf /",
-    images: ['/api/og'],
+    images: ['/opengraph-image'],
   },
 };
 
@@ -31,9 +30,7 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <body className={myFont.className}>
-        <ClientOnly>
-          <TerminalStoreProvider>{children}</TerminalStoreProvider>
-        </ClientOnly>
+        <TerminalStoreProvider>{children}</TerminalStoreProvider>
       </body>
     </html>
   );
