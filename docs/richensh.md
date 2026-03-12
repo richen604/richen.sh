@@ -1,4 +1,8 @@
-# TODO
+---
+tags:
+  - project/richensh
+---
+
 
 - [x] make urls call certain components like a static site
 - [x] fix cli output alignment and line spacing
