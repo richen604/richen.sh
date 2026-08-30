@@ -2,19 +2,16 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
     <loc>https://richen.sh/</loc>
-    <lastmod>2026-08-30</lastmod>
     <changefreq>yearly</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
-    <loc>https://richen.sh/projects</loc>
-    <lastmod>2026-08-30</lastmod>
+    <loc>https://richen.sh/projects/</loc>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://richen.sh/contact</loc>
-    <lastmod>2026-08-30</lastmod>
+    <loc>https://richen.sh/contact/</loc>
     <changefreq>yearly</changefreq>
     <priority>0.5</priority>
   </url>

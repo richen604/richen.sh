@@ -375,6 +375,13 @@ ${noise}\n`;
      * @type {number}
      */
     this.frameCount = 0;
+    /** @type {number|null} */
+    this.animationFrame = null;
+    /** @type {WebGLBuffer|null} */
+    this.vertexBuffer = null;
+    this.mouseEnabled = false;
+    this.escapeEnabled = false;
+    this.resizeEnabled = false;
     /**
      * Shader program
      * @type {WebGLProgram}
@@ -491,7 +498,11 @@ ${noise}\n`;
     }
     // init webgl context
     const opt = { alpha: false, preserveDrawingBuffer: true };
-    this.gl = this.canvas.getContext("webgl2", opt);
+    try {
+      this.gl = this.canvas.getContext("webgl2", opt);
+    } catch {
+      this.gl = null;
+    }
     this.isWebGL2 = this.gl != null;
     if (this.isWebGL2 === true) {
       // in WebGL2
@@ -501,7 +512,14 @@ ${noise}\n`;
       );
     } else {
       // in WebGL1
-      this.gl = this.canvas.getContext("webgl", opt);
+      try {
+        this.gl = this.canvas.getContext("webgl", opt);
+      } catch {
+        this.gl = null;
+      }
+      if (this.gl == null) {
+        return;
+      }
       this.gl.getExtension("OES_standard_derivatives");
       // renderable color buffer float
       this.extension.float = this.gl.getExtension("OES_texture_float");
@@ -524,10 +542,6 @@ ${noise}\n`;
         );
       }
     }
-    if (this.gl == null) {
-      console.log("webgl unsupported");
-      return;
-    }
     // check event
     if (
       option.hasOwnProperty("eventTarget") &&
@@ -537,13 +551,16 @@ ${noise}\n`;
       this.eventTarget = option.eventTarget;
     }
     if (option.hasOwnProperty("mouse") && option.mouse === true) {
+      this.mouseEnabled = true;
       this.eventTarget.addEventListener("pointermove", this.mouseMove, false);
     }
     if (option.hasOwnProperty("escape") && option.escape === true) {
+      this.escapeEnabled = true;
       window.addEventListener("keydown", this.keyDown, false);
     }
     if (option.hasOwnProperty("resize") && option.resize === true) {
       this.resize = true;
+      this.resizeEnabled = true;
       window.addEventListener("resize", this.rect, false);
     }
     if (option.hasOwnProperty("offsetTime") && option.offsetTime > 0.0) {
@@ -615,7 +632,8 @@ void main(){
     }
 
     this.fFront = this.fBack = this.fTemp = null;
-    this.gl.bindBuffer(this.gl.ARRAY_BUFFER, this.gl.createBuffer());
+    this.vertexBuffer = this.gl.createBuffer();
+    this.gl.bindBuffer(this.gl.ARRAY_BUFFER, this.vertexBuffer);
     this.gl.bufferData(
       this.gl.ARRAY_BUFFER,
       new Float32Array([-1, 1, 0, -1, -1, 0, 1, 1, 0, 1, -1, 0]),
@@ -634,6 +652,9 @@ void main(){
    * @return {object} instance
    */
   render(source, time) {
+    if (!this.gl) {
+      return this;
+    }
     if (source === null || source === undefined || source === "") {
       if (this.FS === "") {
         return;
@@ -649,9 +670,13 @@ void main(){
    * set rect
    */
   rect() {
-    const bound = this.target.getBoundingClientRect();
-    this.width = bound.width;
-    this.height = bound.height;
+    if (!this.gl || !this.canvas) {
+      return;
+    }
+    const bound = this.canvas.getBoundingClientRect();
+    const pixelRatio = window.devicePixelRatio || 1;
+    this.width = Math.max(1, Math.round(bound.width * pixelRatio));
+    this.height = Math.max(1, Math.round(bound.height * pixelRatio));
     this.canvas.width = this.width;
     this.canvas.height = this.height;
     this.resetBuffer(this.fFront);
@@ -685,10 +710,14 @@ void main(){
    * @param {number} [time] - time of uniform
    */
   reset(time) {
+    if (!this.gl) {
+      return;
+    }
     this.rect();
     let program = this.gl.createProgram();
     let vs = this.createShader(program, 0, this.preprocessVertexCode(this.VS));
     if (vs === false) {
+      this.gl.deleteProgram(program);
       return;
     }
     let fs = this.createShader(
@@ -698,6 +727,7 @@ void main(){
     );
     if (fs === false) {
       this.gl.deleteShader(vs);
+      this.gl.deleteProgram(program);
       return;
     }
     this.gl.linkProgram(program);
@@ -711,6 +741,7 @@ void main(){
         const t = getTimeString();
         this.onBuildCallback("error", ` ● [ ${t} ] ${msg}`);
       }
+      this.gl.deleteProgram(program);
       program = null;
       return;
     }
@@ -804,7 +835,8 @@ void main(){
       return;
     }
     if (this.animation === true) {
-      requestAnimationFrame(() => {
+      this.animationFrame = requestAnimationFrame(() => {
+        this.animationFrame = null;
         this.draw();
       });
     }
@@ -1221,12 +1253,54 @@ void main(){
    * mouse event
    */
   mouseMove(eve) {
-    if (eve.clientY > this.target.height) {
+    if (!this.canvas) {
       return;
     }
-    const x = Math.min(eve.clientX, this.target.width);
-    const y = Math.min(eve.clientY, this.target.height);
-    this.mousePosition = [x / this.target.width, 1.0 - y / this.target.height];
+    const bound = this.canvas.getBoundingClientRect();
+    if (bound.width === 0 || bound.height === 0) {
+      return;
+    }
+    const x = Math.max(0, Math.min(eve.clientX - bound.left, bound.width));
+    const y = Math.max(0, Math.min(eve.clientY - bound.top, bound.height));
+    this.mousePosition = [x / bound.width, 1.0 - y / bound.height];
+  }
+
+  /** Release listeners, animation work, and owned WebGL resources. */
+  dispose() {
+    this.run = false;
+    this.animation = false;
+    if (this.animationFrame != null) {
+      cancelAnimationFrame(this.animationFrame);
+      this.animationFrame = null;
+    }
+    if (this.mouseEnabled && this.eventTarget) {
+      this.eventTarget.removeEventListener("pointermove", this.mouseMove, false);
+    }
+    if (this.escapeEnabled) {
+      window.removeEventListener("keydown", this.keyDown, false);
+    }
+    if (this.resizeEnabled) {
+      window.removeEventListener("resize", this.rect, false);
+    }
+    this.mouseEnabled = this.escapeEnabled = this.resizeEnabled = false;
+
+    if (!this.gl) {
+      return;
+    }
+    this.resetBuffer(this.fFront);
+    this.resetBuffer(this.fBack);
+    this.resetBuffer(this.fTemp);
+    this.fFront = this.fBack = this.fTemp = null;
+    [this.program, this.postProgram, this.post300Program].forEach((program) => {
+      if (program && this.gl.isProgram(program)) {
+        this.gl.deleteProgram(program);
+      }
+    });
+    if (this.vertexBuffer && this.gl.isBuffer(this.vertexBuffer)) {
+      this.gl.deleteBuffer(this.vertexBuffer);
+    }
+    this.program = this.postProgram = this.post300Program = null;
+    this.vertexBuffer = null;
   }
 
   /**

@@ -45,7 +45,15 @@ jobs:
         run: pnpm build
 
       - name: Verify Pages output
-        run: test -f dist/index.html && test -f dist/projects/index.html && test -f dist/contact/index.html
+        run: |
+          test -f dist/index.html
+          test -f dist/projects/index.html
+          test -f dist/contact/index.html
+          test -f dist/favicon.svg
+          test -f dist/Gohu.ttf
+          test -f dist/opengraph-image.png
+          test -f dist/robots.txt
+          test -f dist/sitemap.xml
 
       - name: Set up Pages
         uses: actions/configure-pages@v5

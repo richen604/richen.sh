@@ -24,8 +24,6 @@
               pkgs.nodejs_22
               pkgs.pnpm
             ];
-
-            NEXT_TELEMETRY_DISABLED = "1";
           };
         });
     };

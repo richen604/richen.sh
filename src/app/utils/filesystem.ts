@@ -37,7 +37,77 @@ const initialFileSystem: FileSystem = {
   cwd: ['home', 'user'],
 };
 
-export const fileSystemAtom = atomWithStorage<FileSystem>('filesystem', initialFileSystem, createJSONStorage());
+const normalizeBytes = (value: unknown): Uint8Array | null => {
+  if (value instanceof Uint8Array) return new Uint8Array(value);
+  if (typeof value !== 'object' || value === null) return null;
+  const record = value as Record<string, unknown>;
+  const source = record.type === 'Buffer' && Array.isArray(record.data)
+    ? record.data
+    : Object.keys(record).every((key) => /^\d+$/.test(key))
+      ? Object.keys(record).sort((a, b) => Number(a) - Number(b)).map((key) => record[key])
+      : null;
+  if (source?.every((byte) => typeof byte === 'number' && Number.isInteger(byte) && byte >= 0 && byte <= 255) !== true) {
+    return null;
+  }
+  return Uint8Array.from(source as number[]);
+};
+
+const normalizeNode = (value: unknown): FileSystemNode | null => {
+  if (!value || typeof value !== 'object') return null;
+  const record = value as Record<string, unknown>;
+  if (record.type === 'file') {
+    const bytes = normalizeBytes(record.content);
+    if (record.content !== undefined && typeof record.content !== 'string' && !bytes) return null;
+    return {
+      type: 'file',
+      content: typeof record.content === 'string' ? record.content : bytes ?? undefined,
+      ...(typeof record.mimetype === 'string' ? { mimetype: record.mimetype } : {}),
+    };
+  }
+  if (record.type !== 'directory') return null;
+  const children: Record<string, FileSystemNode> = {};
+  if (typeof record.children === 'object' && record.children !== null && !Array.isArray(record.children)) {
+    for (const [name, child] of Object.entries(record.children)) {
+      if (!name || name === '.' || name === '..' || name.includes('/')) continue;
+      const normalized = normalizeNode(child);
+      if (normalized) children[name] = normalized;
+    }
+  }
+  return { type: 'directory', children };
+};
+
+const normalizeFileSystem = (value: unknown): FileSystem => {
+  if (!value || typeof value !== 'object') return initialFileSystem;
+  const record = value as Record<string, unknown>;
+  const root = normalizeNode(record.root);
+  if (!root || root.type !== 'directory') return initialFileSystem;
+  const cwd = Array.isArray(record.cwd)
+    ? record.cwd.filter((segment): segment is string => typeof segment === 'string' && !!segment && segment !== '.' && segment !== '..' && !segment.includes('/'))
+    : [];
+  const fs = { root, cwd };
+  return getNodeAtPath(fs, cwd)?.type === 'directory' ? fs : { root, cwd: [] };
+};
+
+const fileSystemStorage: {
+  getItem: (key: string, initialValue: FileSystem) => FileSystem;
+  setItem: (key: string, value: FileSystem) => void;
+  removeItem: (key: string) => void;
+} = (() => {
+  const storage = createJSONStorage<unknown>(() => localStorage);
+  return {
+    getItem(key, initialValue) {
+      try {
+        return normalizeFileSystem(storage.getItem(key, initialValue));
+      } catch {
+        return initialValue;
+      }
+    },
+    setItem: (key, value) => storage.setItem(key, value),
+    removeItem: (key) => storage.removeItem(key),
+  };
+})();
+
+export const fileSystemAtom = atomWithStorage<FileSystem>('filesystem', initialFileSystem, fileSystemStorage, { getOnInit: true });
 
 const getMimetype = (filename: string): string => {
   const extension = filename.split('.').pop()?.toLowerCase();
@@ -95,7 +165,7 @@ const resolvePath = (fs: FileSystem, path: string): string[] => {
 };
 
 const updateFileSystem = (fs: FileSystem, updater: (draft: FileSystem) => void): FileSystem => {
-  const newFs = JSON.parse(JSON.stringify(fs)) as FileSystem;
+  const newFs = structuredClone(fs);
   updater(newFs);
   store.set(fileSystemAtom, newFs);
   return newFs;
@@ -135,23 +205,7 @@ export const getFileAsBlob = (fs: FileSystem, path: string): Blob => {
 
 // Filesystem commands
 export const cd = (fs: FileSystem, path: string): FileSystem => {
-  if (path === '/') {
-    return updateFileSystem(fs, (draft) => {
-      draft.cwd = [];
-    });
-  }
-  const segments = path.split('/').filter(Boolean);
-  const resolvedPath = [...fs.cwd];
-
-  for (const segment of segments) {
-    if (segment === '..') {
-      if (resolvedPath.length > 0) {
-        resolvedPath.pop();
-      }
-    } else if (segment !== '.') {
-      resolvedPath.push(segment);
-    }
-  }
+  const resolvedPath = resolvePath(fs, path);
 
   const node = getNodeAtPath(fs, resolvedPath);
   if (node && node.type === 'directory') {
@@ -165,8 +219,9 @@ export const cd = (fs: FileSystem, path: string): FileSystem => {
 export const ls = (fs: FileSystem, path?: string): string => {
   const targetPath = path ? resolvePath(fs, path) : fs.cwd;
   const node = getNodeAtPath(fs, targetPath);
-  if (node && node.type === 'directory' && node.children) {
-    const entries = Object.entries(node.children);
+  if (node && node.type === 'directory') {
+    const entries = Object.entries(node.children ?? {});
+    if (entries.length === 0) return '';
     const maxNameLength = Math.max(...entries.map(([name]) => name.length));
 
     return entries.map(([name, childNode]) => {
@@ -178,11 +233,17 @@ export const ls = (fs: FileSystem, path?: string): string => {
   throw new Error('Directory not found');
 };
 
-export const cat = (fs: FileSystem, path: string): string | Uint8Array => {
+export const cat = (fs: FileSystem, path: string): string => {
   const resolvedPath = resolvePath(fs, path);
   const node = getNodeAtPath(fs, resolvedPath);
   if (node && node.type === 'file' && node.content !== undefined) {
-    return node.content;
+    if (typeof node.content === 'string') return node.content;
+    const bytes = normalizeBytes(node.content);
+    if (!bytes) return '[binary file: unreadable legacy data]';
+    if (node.mimetype?.startsWith('text/')) {
+      return new TextDecoder('utf-8', { fatal: false }).decode(bytes);
+    }
+    return `[binary file: ${bytes.byteLength} bytes, ${node.mimetype ?? 'application/octet-stream'}]`;
   }
   throw new Error('File not found or is not readable');
 };
@@ -297,7 +358,7 @@ export const cp = (fs: FileSystem, sourcePath: string, destPath: string): FileSy
       if (draftDestParentNode.children[destName]) {
         throw new Error('Destination already exists');
       }
-      draftDestParentNode.children[destName] = JSON.parse(JSON.stringify(draftSourceNode)) as FileSystemNode;
+      draftDestParentNode.children[destName] = structuredClone(draftSourceNode!);
     });
   }
   throw new Error('Source file/directory not found or destination directory not found');

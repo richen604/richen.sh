@@ -7,9 +7,8 @@ tags:
 - [x] make urls call certain components like a static site
 - [x] fix cli output alignment and line spacing
 - [ ] fix scrollbar on chrome
-- [ ] logo, metadata?
-- [ ] blog integration with nextjs
-  - [ ] <https://nextjs.org/docs/app/guides/mdx> integrated with terminal styles
+- [x] logo and metadata
+- [ ] blog integration with terminal styles
   - [ ] art generator, ascii
 - [ ] rename neofetch fastfetch
 - [ ] tab completion?

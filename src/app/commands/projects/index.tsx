@@ -8,7 +8,7 @@ const Projects: React.FC<CommandParams> = () => {
         <div className="border-l-2 border-gray-500 pl-4">
           <h3 className="font-semibold text-green-400">richen.sh</h3>
           <p className="text-gray-300 text-sm">Interactive terminal portfolio website</p>
-          <p className="text-gray-400 text-xs mt-1">Next.js, TypeScript, Tailwind CSS</p>
+          <p className="text-gray-400 text-xs mt-1">Vite, React, TypeScript, Tailwind CSS</p>
         </div>
 
         <div className="border-l-2 border-gray-500 pl-4">
@@ -30,4 +30,4 @@ const Projects: React.FC<CommandParams> = () => {
   );
 };
 
-export default Projects; 
+export default Projects;

@@ -59,6 +59,7 @@ const Shader: React.FC<CommandParams> = ({ args }) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const fragmenRef = useRef<Fragmen | null>(null);
   const [msg, setMsg] = useState("");
+  const [unavailable, setUnavailable] = useState(false);
   const [example, setExample] = useState<keyof typeof examples>(exampleArg);
 
   useEffect(() => {
@@ -81,76 +82,33 @@ const Shader: React.FC<CommandParams> = ({ args }) => {
         resize: true,
         escape: true,
       };
-      fragmenRef.current = new Fragmen(options);
-      fragmenRef.current.animation = !reducedMotion.matches;
-
-      const tryRender = (mode: number) => {
-        return new Promise<boolean>((resolve) => {
-          if (!fragmenRef.current) {
-            return resolve(false);
-          }
-          fragmenRef.current.mode = mode;
-          fragmenRef.current.render(examples[example][0]);
-          resolve(fragmenRef.current.run);
-        });
-      };
-
-      const initializeShader = async () => {
-        for (let mode = 0; mode <= 11; mode++) {
-          const success = await tryRender(mode);
-
-          if (success) {
-            break;
-          }
-        }
-      };
-
-      void initializeShader();
-
-      fragmenRef.current.onBuild((_status: string, msg: string) => {
+      const fragmen = new Fragmen(options);
+      fragmenRef.current = fragmen;
+      fragmen.animation = !reducedMotion.matches;
+      fragmen.onBuild((_status: string, msg: string) => {
         const msgParts = msg.split("\n");
         setMsg(msgParts[0]);
       });
+
+      if (!fragmen.gl) {
+        setUnavailable(true);
+        setMsg("WebGL is unavailable in this browser or device.");
+      } else {
+        for (let mode = 0; mode <= 11 && !fragmen.run; mode++) {
+          fragmen.mode = mode;
+          fragmen.render(examples[example][0]);
+        }
+        if (!fragmen.run) {
+          setUnavailable(true);
+          setMsg("This shader could not be rendered by the available WebGL context.");
+        }
+      }
     }
 
     return () => {
       reducedMotion.removeEventListener("change", handleMotionPreference);
       if (fragmenRef.current) {
-        // Stop the animation loop
-        fragmenRef.current.run = false;
-        fragmenRef.current.animation = false;
-
-        // Remove event listeners
-        if (fragmenRef.current.eventTarget) {
-          // TODO: remove this after migrating shader to typescript
-          // eslint-disable-next-line @typescript-eslint/unbound-method
-          fragmenRef.current.eventTarget.removeEventListener("pointermove", fragmenRef.current.mouseMove, false);
-        }
-        // eslint-disable-next-line @typescript-eslint/unbound-method
-        window.removeEventListener("keydown", fragmenRef.current.keyDown, false);
-        // eslint-disable-next-line @typescript-eslint/unbound-method
-        window.removeEventListener("resize", fragmenRef.current.rect, false);
-
-        // Clean up WebGL resources
-        if (fragmenRef.current.gl) {
-          // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
-          fragmenRef.current.resetBuffer(fragmenRef.current.fFront);
-          // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
-          fragmenRef.current.resetBuffer(fragmenRef.current.fBack);
-          // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
-          fragmenRef.current.resetBuffer(fragmenRef.current.fTemp);
-
-          if (fragmenRef.current.program) {
-            fragmenRef.current.gl.deleteProgram(fragmenRef.current.program);
-          }
-          if (fragmenRef.current.postProgram) {
-            fragmenRef.current.gl.deleteProgram(fragmenRef.current.postProgram);
-          }
-          if (fragmenRef.current.post300Program) {
-            fragmenRef.current.gl.deleteProgram(fragmenRef.current.post300Program);
-          }
-        }
-
+        fragmenRef.current.dispose();
         fragmenRef.current = null;
       }
     };
@@ -163,9 +121,14 @@ const Shader: React.FC<CommandParams> = ({ args }) => {
       return;
     }
     const newExample = event.target.value as keyof typeof examples;
+    setUnavailable(false);
     fragmenRef.current.render(examples[newExample][0]);
+    if (!fragmenRef.current.run) {
+      setUnavailable(true);
+      setMsg("This shader could not be rendered by the available WebGL context.");
+    }
     setExample(newExample);
-    store.set(displayAtom, [
+    void store.set(displayAtom, [
       JSON.stringify({
         componentKey: "shader",
         props: { args: [newExample] },
@@ -192,6 +155,11 @@ const Shader: React.FC<CommandParams> = ({ args }) => {
         >
           {example} shader visualization
         </canvas>
+        {unavailable && (
+          <div role="status" className="comment text-sm my-2">
+            {msg}
+          </div>
+        )}
         {examples[example][1] && (
           <div className="text-xs text-gray-500 m-2">
             Credit:{" "}
@@ -209,7 +177,9 @@ const Shader: React.FC<CommandParams> = ({ args }) => {
             onExampleChange={handleExampleChange}
             defaultExample={example}
           />
-          <div className="comment text-xs text-pretty w-full">{msg}</div>
+          {!unavailable && (
+            <div className="comment text-xs text-pretty w-full">{msg}</div>
+          )}
         </div>
       </div>
     </>
