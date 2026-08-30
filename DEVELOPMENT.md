@@ -1,135 +1,48 @@
 # development
 
-```bash
-# install dependencies
-pnpm install
+## setup
 
-# start development server
-pnpm dev
-
-# build for production
-pnpm build
-```
-
-## key directories
+install nix and direnv, then load the repository development shell:
 
 ```bash
-src/app/
-├── commands/          # command implementations
-├── components/        # shared react components
-├── hooks/            # custom hooks and utilities
-├── store/            # jotai atoms and state
-├── utils/            # helper functions
-├── contact/          # static contact page
-└── projects/         # static projects page
+direnv allow
+pnpm install --frozen-lockfile
 ```
 
-### command flow
+the flake supports linux and macos on x86_64 and aarch64 and provides node.js 22 and pnpm. run `nix develop` instead when direnv is unavailable.
 
-1. user types command in terminal
-2. `useCommands` hook parses input
-3. command registered in `componentMap`
-4. component renders with parsed args
-5. output added to display state
-6. state persisted to localStorage
-
-## persistence
-
-the terminal uses jotai with localStorage for persistence:
-
-- **command history** - previous commands saved across sessions
-- **display state** - terminal output persists on refresh
-- **filesystem** - files and directories saved locally
-
-## static pages
-
-commands can be accessed as static pages at `/[command]`:
-
-- `/projects` - projects command output
-- `/contact` - contact information
-- `/help` - available commands
-
-static pages use the same command components but without the cli interface
-
-## filesystem structure
-
-the virtual filesystem starts with:
+## commands
 
 ```bash
-/
-└── home/
-    └── user/
-        └── welcome.txt
+pnpm dev        # start the vite development server
+pnpm build      # create the production build in dist/
+pnpm preview    # preview the production build locally
+pnpm lint       # run eslint
+pnpm typecheck  # run typescript checks
 ```
 
-files support:
+to make the production preview available on the local network:
 
-- text content (string)
-- binary content (uint8array)
-- mime type detection
-- file operations (create, read, update, delete)
-
-## adding commands
-
-commands are react components that receive parsed arguments and render output
-
-### 1. create command component
-
-```typescript
-// src/app/commands/mycommand/index.tsx
-import React from "react";
-import { type CommandParams } from "..";
-
-const MyCommand: React.FC<CommandParams> = ({ args, flags, filesystem }) => {
-  return (
-    <div>
-      <p>hello from mycommand</p>
-      <p>args: {args.join(', ')}</p>
-    </div>
-  );
-};
-
-export default MyCommand;
+```bash
+pnpm preview --host 0.0.0.0
 ```
 
-commands receive these props:
+run `pnpm build` before `pnpm preview`.
 
-```typescript
-type CommandParams = {
-  args: string[];           // positional arguments
-  flags: Record<string, string[]>; // --flag values
-  all: string[];           // all arguments including flags
-  timestamp: string;       // execution timestamp
-  filesystem: FileSystem;  // virtual filesystem state
-};
-```
+## routes
 
-### 2. register in command map
+vite builds three html entry points that share `src/main.tsx`:
 
-the command map is used in persistence to map command names to components on rerender
+- `/` - terminal
+- `/projects/` - project portfolio
+- `/contact/` - contact information
 
-```typescript
-// src/app/commands/index.tsx
-import MyCommand from "./mycommand";
+the source html files are `index.html`, `projects/index.html`, and `contact/index.html`. the production build preserves this structure as `dist/index.html`, `dist/projects/index.html`, and `dist/contact/index.html`, with bundled assets under `dist/assets/` and public files copied into `dist/`.
 
-export const componentMap = {
-  // ... existing commands
-  mycommand: MyCommand,
-};
-```
+## deployment
 
-### 3. add to help text
+github pages serves the static `dist/` artifact at the custom domain `richen.sh`. deployment builds the site from `main`, uploads `dist/`, and publishes it through github pages; the pages custom-domain setting, dns records, tls, and https enforcement remain provider configuration rather than application routing.
 
-```typescript
-// src/app/commands/help/index.tsx
-<li>mycommand [args] - description of what it does</li>
-```
+the build uses root-relative urls and `base: "/"`, which matches the custom domain. hosting under a repository subpath requires changing the vite base and rebuilding.
 
-## browser support
-
-tested on:
-
-- chrome/chromium
-- firefox
-
-requires javascript enabled for full functionality, shader command requires webgl enabled
+`dist/` is host-independent static output. any static host can deploy that directory if it serves directory index files for `/projects/` and `/contact/`, preserves root-relative assets, and maps the custom domain to the deployment.

@@ -1,6 +1,6 @@
 # richen.sh
 
-![next.js](https://img.shields.io/badge/next.js-000000?style=flat&logo=nextdotjs&logoColor=ffffff&logoSize=auto)
+![vite](https://img.shields.io/badge/vite-000000?style=flat&logo=vite&logoColor=ffffff&logoSize=auto)
 ![typescript](https://img.shields.io/badge/typescript-000000?style=flat&logo=typescript&logoColor=ffffff&logoSize=auto)
 ![tailwind](https://img.shields.io/badge/tailwind-000000?style=flat&logo=tailwindcss&logoColor=ffffff&logoSize=auto)
 ![glsl](https://img.shields.io/badge/glsl-000000?style=flat&logo=opengl&logoColor=ffffff&logoSize=auto)
@@ -46,6 +46,14 @@ a terminal emulator in the browser with persistent filesystem and command system
 
 ## development
 
-for more development info see [DEVELOPMENT.md](./DEVELOPMENT.md)
+the project is a vite multi-page app with routes at `/`, `/projects/`, and `/contact/`.
 
-for planned features see [TODO.md](./TODO.md)
+```bash
+direnv allow
+pnpm install --frozen-lockfile
+pnpm dev
+```
+
+`direnv allow` loads the nix flake, which provides node.js and pnpm. see [DEVELOPMENT.md](./DEVELOPMENT.md) for build, preview, validation, and deployment details.
+
+for project notes see [docs/richensh.md](./docs/richensh.md)
