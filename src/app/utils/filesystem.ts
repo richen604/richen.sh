@@ -1,6 +1,5 @@
 import { atomWithStorage, createJSONStorage } from 'jotai/utils';
 import { store } from '../store';
-import { Buffer } from 'buffer';
 
 export type FileSystemNode = {
   type: 'file' | 'directory';
@@ -103,12 +102,12 @@ const updateFileSystem = (fs: FileSystem, updater: (draft: FileSystem) => void):
 };
 
 export const uint8ArrayToBase64 = (uint8Array: Uint8Array): string => {
-  return Buffer.from(uint8Array).toString('base64');
+  return btoa(Array.from(uint8Array, (byte) => String.fromCharCode(byte)).join(''));
 };
 
 
 export const base64ToUint8Array = (base64: string): Uint8Array => {
-  return new Uint8Array(Buffer.from(base64, 'base64'));
+  return Uint8Array.from(atob(base64), (character) => character.charCodeAt(0));
 };
 
 const uint8ArrayToBlob = (uint8Array: Uint8Array, mimeType: string): Blob => {

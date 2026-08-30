@@ -1,7 +1,13 @@
 @import "tailwindcss";
 
+@font-face {
+  font-family: "Gohu";
+  src: url("/Gohu.ttf") format("truetype");
+  font-display: swap;
+}
+
 @theme inline {
-  --font-mono: var(--font-gohu);
+  --font-mono: var(--font-gohu, "Gohu", monospace);
 }
 
 :root {
@@ -28,6 +34,21 @@ body {
       transparent 2px);
   text-shadow: var(--text-shadow);
   animation: flicker 1.5s infinite linear;
+}
+
+:focus-visible {
+  outline: 2px solid currentColor;
+  outline-offset: 2px;
+}
+
+.terminal-input:focus-visible {
+  outline: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  body {
+    animation: none;
+  }
 }
 
 .comment {

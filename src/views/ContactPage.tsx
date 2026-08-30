@@ -1,20 +1,17 @@
-"use client";
-
-import React from "react";
-import TerminalLayout from "../components/TerminalLayout";
-import Contact from "../commands/contact";
 import { useAtom } from "jotai";
-import { fileSystemAtom } from "../utils/filesystem";
+
+import Contact from "../app/commands/contact";
+import TerminalLayout from "../app/components/TerminalLayout";
+import { fileSystemAtom } from "../app/utils/filesystem";
 
 export default function ContactPage() {
   const [filesystem] = useAtom(fileSystemAtom);
-
-  // Create mock command params for the static page
+  const timestamp = new Date();
   const commandParams = {
     args: [],
     flags: {},
     all: [],
-    timestamp: new Date().toISOString(),
+    timestamp: timestamp.toISOString(),
     filesystem,
   };
 
@@ -24,11 +21,11 @@ export default function ContactPage() {
         <div className="p-2 flex justify-between items-center">
           <span>&gt; contact</span>
           <span className="text-nowrap ml-2 text-gray-500 text-xs md:text-sm lg:text-base">
-            {new Date().toLocaleTimeString()}
+            {timestamp.toLocaleTimeString()}
           </span>
         </div>
         <Contact {...commandParams} />
       </div>
     </TerminalLayout>
   );
-} 
+}

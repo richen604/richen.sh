@@ -2,8 +2,6 @@ import React, { useEffect, useRef } from "react";
 import { useAtom } from "jotai";
 import { displayAtom, store } from "../store";
 import { fileSystemAtom } from "../utils/filesystem";
-import Link from "next/link";
-import ClientOnly from "../hooks/ClientWrapper";
 
 interface TerminalLayoutProps {
   children?: React.ReactNode;
@@ -48,38 +46,34 @@ const TerminalLayout: React.FC<TerminalLayoutProps> = ({
   };
 
   return (
-    <ClientOnly>
-      <main
+    <main
         ref={mainRef}
         className="h-screen flex flex-col overflow-hidden text-sm md:text-base lg:text-lg font-mono p-2 leading-tight"
         onClick={handleMainClick}
       >
-        <nav className="flex pb-2 flex-shrink-0 text-sm md:text-base lg:text-lg">
+        <nav aria-label="Primary navigation" className="flex pb-2 flex-shrink-0 text-sm md:text-base lg:text-lg">
           <div className="flex space-x-1 ">
-            <Link
-              prefetch
-              href="/projects"
+            <a
+              href="/projects/"
               className="flex items-center justify-center px-1 rounded-md focus:bg-[#ffffff1a] hover:bg-[#ffffff1a] cursor-pointer"
             >
               projects
-            </Link>
-            <Link
-              prefetch
-              href="/contact"
+            </a>
+            <a
+              href="/contact/"
               className="flex items-center justify-center px-1 rounded-md focus:bg-[#ffffff1a] hover:bg-[#ffffff1a] cursor-pointer"
             >
               contact
-            </Link>
+            </a>
           </div>
           <div className="flex space-x-4 ml-auto">
             {!showCLI && (
-              <Link
-                prefetch
+              <a
                 href="/"
                 className="flex items-center justify-center px-1 rounded-md focus:bg-[#ffffff1a] hover:bg-[#ffffff1a] cursor-pointer"
               >
                 ↩ back
-              </Link>
+              </a>
             )}
             {showCLI && (
               <div className="flex flex-shrink">
@@ -135,8 +129,12 @@ const TerminalLayout: React.FC<TerminalLayoutProps> = ({
             </div>
             <input
               ref={inputRef}
-              className="bg-transparent outline-none ml-2 min-w-0 flex-grow placeholder-gray-500"
+              className="terminal-input bg-transparent outline-none ml-2 min-w-0 flex-grow placeholder-gray-500"
               onKeyDown={onKeyDown}
+              aria-label="Terminal command"
+              autoComplete="off"
+              autoCapitalize="none"
+              spellCheck={false}
               placeholder=""
             />
             <span className="text-nowrap ml-2 text-xs md:text-sm lg:text-base opacity-60">
@@ -151,9 +149,8 @@ const TerminalLayout: React.FC<TerminalLayoutProps> = ({
         )}
 
         {!showCLI && null}
-      </main>
-    </ClientOnly>
+    </main>
   );
 };
 
-export default TerminalLayout; 
+export default TerminalLayout;

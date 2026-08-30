@@ -1,20 +1,17 @@
-"use client";
-
-import React from "react";
-import TerminalLayout from "../components/TerminalLayout";
-import Projects from "../commands/projects";
 import { useAtom } from "jotai";
-import { fileSystemAtom } from "../utils/filesystem";
+
+import Projects from "../app/commands/projects";
+import TerminalLayout from "../app/components/TerminalLayout";
+import { fileSystemAtom } from "../app/utils/filesystem";
 
 export default function ProjectsPage() {
   const [filesystem] = useAtom(fileSystemAtom);
-
-  // Create mock command params for the static page
+  const timestamp = new Date();
   const commandParams = {
     args: [],
     flags: {},
     all: [],
-    timestamp: new Date().toISOString(),
+    timestamp: timestamp.toISOString(),
     filesystem,
   };
 
@@ -24,11 +21,11 @@ export default function ProjectsPage() {
         <div className="p-2 flex justify-between items-center">
           <span>&gt; projects</span>
           <span className="text-nowrap ml-2 text-gray-500 text-xs md:text-sm lg:text-base">
-            {new Date().toLocaleTimeString()}
+            {timestamp.toLocaleTimeString()}
           </span>
         </div>
         <Projects {...commandParams} />
       </div>
     </TerminalLayout>
   );
-} 
+}

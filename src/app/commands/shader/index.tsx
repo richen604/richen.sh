@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import { Fragmen } from "./fragmen.js";
 import { displayAtom, store } from "@/app/store";
-import { type CommandParams } from "../index.jsx";
+import type { CommandParams } from "../index";
 import useCommands from "../../hooks/useCommands";
 
 const examples = {
@@ -39,6 +39,7 @@ const ExampleSelect = ({
       className="w-auto dark:bg-gray-800 dark:text-white"
       onChange={onExampleChange}
       value={defaultExample}
+      aria-label="Shader example"
     >
       {Object.keys(examples).map((example) => (
         <option key={example} value={example}>
@@ -62,6 +63,17 @@ const Shader: React.FC<CommandParams> = ({ args }) => {
 
   useEffect(() => {
     replaceDisplay();
+    const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
+    const handleMotionPreference = (event: MediaQueryListEvent) => {
+      if (!fragmenRef.current) return;
+
+      fragmenRef.current.animation = !event.matches;
+      if (!event.matches) {
+        fragmenRef.current.draw();
+      }
+    };
+
+    reducedMotion.addEventListener("change", handleMotionPreference);
     if (canvasRef.current) {
       const options = {
         target: canvasRef.current,
@@ -70,9 +82,10 @@ const Shader: React.FC<CommandParams> = ({ args }) => {
         escape: true,
       };
       fragmenRef.current = new Fragmen(options);
+      fragmenRef.current.animation = !reducedMotion.matches;
 
       const tryRender = (mode: number) => {
-        return new Promise((resolve) => {
+        return new Promise<boolean>((resolve) => {
           if (!fragmenRef.current) {
             return resolve(false);
           }
@@ -94,18 +107,14 @@ const Shader: React.FC<CommandParams> = ({ args }) => {
 
       void initializeShader();
 
-      fragmenRef.current.onBuild((status: string, msg: string) => {
+      fragmenRef.current.onBuild((_status: string, msg: string) => {
         const msgParts = msg.split("\n");
-
-        if (status === "success") {
-          setMsg(msgParts[0]);
-        } else {
-          setMsg(msgParts[0]);
-        }
+        setMsg(msgParts[0]);
       });
     }
 
     return () => {
+      reducedMotion.removeEventListener("change", handleMotionPreference);
       if (fragmenRef.current) {
         // Stop the animation loop
         fragmenRef.current.run = false;
@@ -174,11 +183,15 @@ const Shader: React.FC<CommandParams> = ({ args }) => {
       <div className="flex flex-col justify-start items-start">
         <canvas
           ref={canvasRef}
+          role="img"
+          aria-label={`Animated ${example} shader visualization`}
           style={{
             width: "75%",
             height: "60%",
           }}
-        />
+        >
+          {example} shader visualization
+        </canvas>
         {examples[example][1] && (
           <div className="text-xs text-gray-500 m-2">
             Credit:{" "}

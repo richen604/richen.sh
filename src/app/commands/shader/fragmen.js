@@ -1,4 +1,4 @@
-import noise from "./shader_snippet/noise.glsl";
+import noise from "./shader_snippet/noise.glsl?raw";
 
 export class Fragmen {
   /**

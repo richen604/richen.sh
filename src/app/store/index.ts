@@ -1,4 +1,3 @@
-"use client";
 import { createStore } from "jotai";
 import { atomWithStorage, createJSONStorage } from "jotai/utils";
 import { type CommandParams } from "../commands";
