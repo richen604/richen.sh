@@ -1,0 +1,57 @@
+import js from "@eslint/js";
+import { defineConfig } from "eslint/config";
+import reactHooks from "eslint-plugin-react-hooks";
+import tseslint from "typescript-eslint";
+
+export default defineConfig(
+  {
+    ignores: ["dist/**", "src/app/commands/shader/fragmen.js"],
+    linterOptions: {
+      reportUnusedDisableDirectives: false,
+    },
+  },
+  {
+    files: ["src/**/*.{ts,tsx}"],
+    extends: [
+      js.configs.recommended,
+      tseslint.configs.recommendedTypeChecked,
+      tseslint.configs.stylisticTypeChecked,
+    ],
+    languageOptions: {
+      parserOptions: {
+        projectService: true,
+        tsconfigRootDir: import.meta.dirname,
+      },
+    },
+    plugins: {
+      "react-hooks": reactHooks,
+    },
+    rules: {
+      "@typescript-eslint/array-type": "off",
+      "@typescript-eslint/consistent-type-definitions": "off",
+      "@typescript-eslint/consistent-type-imports": [
+        "warn",
+        {
+          prefer: "type-imports",
+          fixStyle: "inline-type-imports",
+        },
+      ],
+      "@typescript-eslint/no-unused-vars": [
+        "warn",
+        {
+          argsIgnorePattern: "^_",
+        },
+      ],
+      "@typescript-eslint/require-await": "off",
+      "@typescript-eslint/no-misused-promises": [
+        "error",
+        {
+          checksVoidReturn: {
+            attributes: false,
+          },
+        },
+      ],
+      "@typescript-eslint/prefer-optional-chain": "off",
+    },
+  },
+);

@@ -181,7 +181,7 @@ export const base64ToUint8Array = (base64: string): Uint8Array => {
 };
 
 const uint8ArrayToBlob = (uint8Array: Uint8Array, mimeType: string): Blob => {
-  return new Blob([uint8Array], { type: mimeType });
+  return new Blob([new Uint8Array(uint8Array).buffer], { type: mimeType });
 };
 
 export const blobToUint8Array = async (blob: Blob): Promise<Uint8Array> => {
