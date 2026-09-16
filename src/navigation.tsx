@@ -38,8 +38,8 @@ const routes: Record<RoutePath, Route> = {
     component: ProjectsPage,
     metadata: {
       title: "Projects - richen.sh",
-      description: "Explore my software development projects and portfolio",
-      keywords: "projects, portfolio, software development, web development",
+      description: "Open-source projects by Richen",
+      keywords: "open source, NixOS, Godot, projects",
       canonical: "https://richen.sh/projects/",
     },
   },

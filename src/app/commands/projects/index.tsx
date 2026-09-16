@@ -6,21 +6,32 @@ const Projects: React.FC<CommandParams> = () => {
     <div className="space-y-6">
       <div className="space-y-4">
         <div className="border-l-2 border-gray-500 pl-4">
-          <h3 className="font-semibold text-green-400">richen.sh</h3>
-          <p className="text-gray-300 text-sm">Interactive terminal portfolio website</p>
-          <p className="text-gray-400 text-xs mt-1">Vite, React, TypeScript, Tailwind CSS</p>
+          <h3 className="font-semibold">
+            <a href="https://github.com/richen604/richendots">richendots</a>
+          </h3>
+          <p className="text-gray-300 text-sm">Personal multi-host NixOS configuration</p>
         </div>
 
         <div className="border-l-2 border-gray-500 pl-4">
-          <h3 className="font-semibold text-blue-400">Project Alpha</h3>
-          <p className="text-gray-300 text-sm">Full-stack web application with modern architecture</p>
-          <p className="text-gray-400 text-xs mt-1">React, Node.js, PostgreSQL</p>
+          <h3 className="font-semibold">
+            <a href="https://github.com/richen604/godot-shell">godot-shell</a>
+          </h3>
+          <p className="text-gray-300 text-sm">Reproducible Godot development template</p>
         </div>
 
         <div className="border-l-2 border-gray-500 pl-4">
-          <h3 className="font-semibold text-purple-400">CLI Tools Suite</h3>
-          <p className="text-gray-300 text-sm">Collection of productivity command-line tools</p>
-          <p className="text-gray-400 text-xs mt-1">Rust, Python</p>
+          <h3 className="font-semibold">
+            <a href="https://github.com/richen604/hydenix">hydenix</a>{" "}
+            <span className="text-xs text-gray-400">[archived]</span>
+          </h3>
+          <p className="text-gray-300 text-sm">Declarative NixOS configuration for HyDE</p>
+        </div>
+
+        <div className="border-l-2 border-gray-500 pl-4">
+          <h3 className="font-semibold">
+            <a href="https://github.com/richen604/richen.sh">richen.sh</a>
+          </h3>
+          <p className="text-gray-300 text-sm">Interactive terminal website</p>
         </div>
       </div>
       <div className="mt-6 text-sm text-gray-400">
