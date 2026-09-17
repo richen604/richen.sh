@@ -5,5 +5,15 @@
   "dependencyDashboard": true,
   "schedule": ["* 0-5 * * 1"],
   "timezone": "America/Vancouver",
-  "automerge": false
+  "minimumReleaseAge": "7 days",
+  "internalChecksFilter": "strict",
+  "platformAutomerge": false,
+  "packageRules": [
+    {
+      "description": "Automerge non-major updates after checks pass",
+      "matchUpdateTypes": ["minor", "patch", "pin", "digest"],
+      "automerge": true,
+      "automergeType": "pr"
+    }
+  ]
 }
