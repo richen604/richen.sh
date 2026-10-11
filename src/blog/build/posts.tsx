@@ -54,7 +54,10 @@ export async function readPosts(root: string, lazy = false, importModule?: (url:
   const activeCacheFiles = new Set<string>();
   const directories = [join(root, "content/blog")];
   const posts = (await Promise.all(directories.map(async (content) => {
-    const entries = await readdir(content, { withFileTypes: true });
+    const entries = await readdir(content, { withFileTypes: true }).catch((error: NodeJS.ErrnoException) => {
+      if (error.code === "ENOENT") return [];
+      throw error;
+    });
     return Promise.all(entries.filter((entry) => entry.isDirectory()).map(async (entry) => {
       const slug = entry.name;
       validateSlug(slug);
