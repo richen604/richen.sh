@@ -21,9 +21,12 @@
         {
           default = pkgs.mkShellNoCC {
             packages = [
-              pkgs.nodejs_22
+              pkgs.nodejs_24
               pkgs.pnpm
             ];
+            shellHook = ''
+              export PATH="$PWD/scripts:$PATH"
+            '';
           };
         });
     };

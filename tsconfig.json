@@ -9,6 +9,7 @@
     "skipLibCheck": true,
     "strict": true,
     "noEmit": true,
+    "allowImportingTsExtensions": true,
     "esModuleInterop": true,
     "module": "esnext",
     "moduleResolution": "bundler",
@@ -35,6 +36,8 @@
     "src/**/*.ts",
     "src/**/*.tsx",
     "src/**/*.js",
+    "scripts/**/*.ts",
+    "scripts/**/*.tsx",
     "vite.config.ts",
     "tailwind.config.ts"
   ],

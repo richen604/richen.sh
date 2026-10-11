@@ -8,6 +8,7 @@
 
 # testing
 /coverage
+/.playwright-cli/
 
 # production
 /build
@@ -30,3 +31,7 @@ yarn-error.log*
 
 .direnv/
 .pnpm-store/
+
+# Copyright-unclear artwork: development review only, never deployment content.
+/.local-review/
+/.cache/art/
