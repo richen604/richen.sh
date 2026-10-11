@@ -1,7 +1,7 @@
 import { createStore } from "jotai";
 import { atomWithStorage, createJSONStorage } from "jotai/utils";
 import { type CommandParams } from "../commands";
-import { fileSystemAtom } from "../utils/filesystem";
+import { fileSystemAtom, migrateSavedPath, normalizeFileSystem, type FileSystem } from "../utils/filesystem";
 
 export type DisplayItem = {
   componentKey: string;
@@ -22,7 +22,12 @@ const validatingStorage = <T>(normalize: (value: unknown) => T): LocalStorage<T>
   return {
     getItem(key, initialValue) {
       try {
-        return normalize(storage.getItem(key, initialValue));
+        const saved = storage.getItem(key, initialValue);
+        const normalized = normalize(saved);
+        if (JSON.stringify(saved) !== JSON.stringify(normalized)) {
+          try { storage.setItem(key, normalized); } catch { /* Keep readable data when storage is full or read-only. */ }
+        }
+        return normalized;
       } catch {
         return initialValue;
       }
@@ -38,14 +43,29 @@ const validatingStorage = <T>(normalize: (value: unknown) => T): LocalStorage<T>
 
 const normalizeDisplay = (value: unknown): string[] => {
   if (!Array.isArray(value)) return [];
-  return value.filter((entry): entry is string => {
-    if (typeof entry !== "string") return false;
+  return value.flatMap((entry): string[] => {
+    if (typeof entry !== "string") return [];
     try {
       const item: unknown = JSON.parse(entry);
-      return typeof item === "object" && item !== null &&
-        typeof (item as Record<string, unknown>).componentKey === "string";
+      if (typeof item !== "object" || item === null) return [];
+      const record = item as Record<string, unknown>;
+      if (typeof record.componentKey !== 'string') return [];
+      if (record.props && typeof record.props === 'object') {
+        const props = record.props as Record<string, unknown>;
+        if (props.filesystem) {
+          const original = props.filesystem as FileSystem;
+          const fs = normalizeFileSystem(props.filesystem);
+          props.filesystem = fs;
+          if (['cat', 'cd', 'mkdir', 'mv', 'rm', 'touch', 'ls', 'cp', 'cwd', 'pwd'].includes(record.componentKey)) {
+            for (const key of ['args', 'all']) {
+              if (Array.isArray(props[key])) props[key] = (props[key] as unknown[]).map(arg => typeof arg === 'string' ? migrateSavedPath(fs, arg, original) : arg);
+            }
+          }
+        }
+      }
+      return [JSON.stringify(item)];
     } catch {
-      return false;
+      return [];
     }
   });
 };

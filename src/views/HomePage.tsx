@@ -3,6 +3,7 @@ import React from "react";
 
 import { componentMap } from "../app/commands";
 import TerminalLayout from "../app/components/TerminalLayout";
+import { CommandEntry } from "../app/components/CommandEntry";
 import useCommands from "../app/hooks/useCommands";
 import { displayAtom, type DisplayItem as DisplayItemValue } from "../app/store";
 
@@ -13,43 +14,39 @@ const DisplayItem = React.memo(({ item }: { item: string }) => {
   } catch {
     return <div className="display-item p-2 text-gray-500">Unable to display saved terminal entry.</div>;
   }
+  if (!value || typeof value !== "object" || typeof value.componentKey !== "string") {
+    return <div className="display-item p-2 text-gray-500">Unable to display saved terminal entry.</div>;
+  }
   const { componentKey, props, timestamp } = value;
-  const Component = (componentMap as Partial<Record<string, React.ComponentType<DisplayItemValue["props"]>>>)[componentKey];
+  const Component = Object.hasOwn(componentMap, componentKey)
+    ? (componentMap as Partial<Record<string, React.ComponentType<DisplayItemValue["props"]>>>)[componentKey]
+    : undefined;
+  // Unknown commands are saved as text descriptors, not registered components.
+  const unknownCommand = componentKey.endsWith(": command not found");
   const safeTimestamp = typeof timestamp === "string" && !Number.isNaN(Date.parse(timestamp))
     ? timestamp
     : new Date(0).toISOString();
-  const safeProps = props && typeof props === "object" ? props : undefined;
+  const safeProps = props && typeof props === "object" && !Array.isArray(props) ? props : undefined;
 
   return (
-    <div className="display-item" data-key={`${componentKey}-${timestamp}`}>
-      <div className="p-2 flex justify-between items-center">
-        <span>{`> ${componentKey}${Array.isArray(safeProps?.args) ? ` ${safeProps.args.filter((arg): arg is string => typeof arg === "string").join(" ")}` : ""}`}</span>
-        <span className="text-nowrap ml-2 text-gray-500 text-xs md:text-sm lg:text-base">
-          {new Date(safeTimestamp).toLocaleTimeString("en-US", {
-            hour12: false,
-            hour: "2-digit",
-            minute: "2-digit",
-            second: "2-digit",
-          })}
-        </span>
-      </div>
-      {Component && safeProps ? <Component {...safeProps} key={`${componentKey}-${safeTimestamp}`} /> : (
+    <CommandEntry command={componentKey} timestamp={safeTimestamp} args={Array.isArray(safeProps?.args) ? safeProps.args.filter((arg): arg is string => typeof arg === "string") : []}>
+      {unknownCommand && safeProps ? null : Component && safeProps ? <Component {...safeProps} timestamp={safeTimestamp} key={`${componentKey}-${safeTimestamp}`} /> : (
         <div className="p-2 text-gray-500">Unable to display saved terminal entry.</div>
       )}
-    </div>
+    </CommandEntry>
   );
 });
 
 DisplayItem.displayName = "DisplayItem";
 
-export default function HomePage() {
+export default function HomePage({ limit, start = 0 }: { limit?: number; start?: number }) {
   const [display] = useAtom(displayAtom);
   const { handleKeyDown } = useCommands();
 
   return (
-    <TerminalLayout showCLI onKeyDown={handleKeyDown}>
-      {display.map((item, index) => (
-        <DisplayItem key={index} item={item} />
+    <TerminalLayout showCLI onKeyDown={handleKeyDown} outputKey={`${start}:${limit ?? ""}`}>
+      {display.slice(start, limit).map((item, index) => (
+        <DisplayItem key={start + index} item={item} />
       ))}
     </TerminalLayout>
   );

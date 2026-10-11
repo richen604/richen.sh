@@ -3,6 +3,7 @@ import commandRegistry, {
   type CommandParams,
 } from "../../commands";
 import { store, displayAtom } from "../../store";
+import { blogPath, navigate } from "../../../blog/routes";
 export { parseArgsAndFlags, parseCommandArgs } from "./parsing";
 
 export const handleCommand = ({
@@ -13,7 +14,12 @@ export const handleCommand = ({
   timestamp,
   filesystem,
 }: CommandParams & { command: Commands }) => {
-  if (command in commandRegistry) {
+  if (command === "clear") {
+    store.set(displayAtom, []);
+    navigate("/", true, undefined, 0);
+    return;
+  }
+  if (Object.hasOwn(commandRegistry, command)) {
     store.set(displayAtom, (prev) => [
       ...prev,
       JSON.stringify({
@@ -22,6 +28,10 @@ export const handleCommand = ({
         timestamp,
       }),
     ]);
+    if (command === "blog") {
+      const path = blogPath(args);
+      navigate(path ?? "/", true, store.get(displayAtom).length);
+    } else if (window.location.pathname.startsWith("/blog/")) navigate("/", true);
   } else {
     handleUnknown(command);
   }
@@ -36,4 +46,5 @@ export const handleUnknown = (command: string) => {
       timestamp: new Date().toISOString(),
     }),
   ]);
+  if (window.location.pathname.startsWith("/blog/")) navigate("/", true);
 };

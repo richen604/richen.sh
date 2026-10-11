@@ -13,7 +13,7 @@ const Contact: React.FC<CommandParams> = () => {
           <span className=" font-mono">email:</span>
           <a
             href="mailto:richardhenninger@live.com"
-            className="text-blue-400 hover:text-blue-300 underline"
+            className="min-w-0 [overflow-wrap:anywhere] text-blue-400 hover:text-blue-300 underline"
           >
             richardhenninger@live.com
           </a>
@@ -35,4 +35,4 @@ const Contact: React.FC<CommandParams> = () => {
   );
 };
 
-export default Contact; 
+export default Contact;

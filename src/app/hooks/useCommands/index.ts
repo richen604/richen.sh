@@ -3,12 +3,13 @@ import { historyAtom, historyIndexAtom, displayAtom, store, fileSystemAtom } fro
 import { parseArgsAndFlags, handleCommand } from './utils';
 import { type Commands } from '@/app/commands';
 
-const useCommands = () => {
+const useCommands = (onExecute?: (commandLine: string) => boolean) => {
   const [, setDisplay] = useAtom(displayAtom);
   const [history, setHistory] = useAtom(historyAtom);
   const [historyIndex, setHistoryIndex] = useAtom(historyIndexAtom);
 
   const executeCommand = (commandLine: string) => {
+    if (onExecute?.(commandLine)) return;
     const [commandName, ...args] = commandLine.trim().split(' ');
     const { args: parsedArgs, flags, all } = parseArgsAndFlags(args);
 
@@ -72,7 +73,7 @@ const useCommands = () => {
     event.currentTarget.focus();
   };
 
-  return { handleKeyDown, clearDisplay, replaceDisplay, resetDisplay };
+  return { executeCommand, handleKeyDown, clearDisplay, replaceDisplay, resetDisplay };
 };
 
 export default useCommands;

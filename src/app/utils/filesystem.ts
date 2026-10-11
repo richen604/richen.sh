@@ -1,5 +1,6 @@
 import { atomWithStorage, createJSONStorage } from 'jotai/utils';
 import { store } from '../store';
+import { homeSegments, terminalUser } from './identity';
 
 export type FileSystemNode = {
   type: 'file' | 'directory';
@@ -20,7 +21,7 @@ const initialFileSystem: FileSystem = {
       home: {
         type: 'directory',
         children: {
-          user: {
+          [terminalUser]: {
             type: 'directory',
             children: {
               'welcome.txt': {
@@ -34,7 +35,7 @@ const initialFileSystem: FileSystem = {
       },
     },
   },
-  cwd: ['home', 'user'],
+  cwd: [...homeSegments],
 };
 
 const normalizeBytes = (value: unknown): Uint8Array | null => {
@@ -76,7 +77,7 @@ const normalizeNode = (value: unknown): FileSystemNode | null => {
   return { type: 'directory', children };
 };
 
-const normalizeFileSystem = (value: unknown): FileSystem => {
+export const normalizeFileSystem = (value: unknown): FileSystem => {
   if (!value || typeof value !== 'object') return initialFileSystem;
   const record = value as Record<string, unknown>;
   const root = normalizeNode(record.root);
@@ -85,7 +86,52 @@ const normalizeFileSystem = (value: unknown): FileSystem => {
     ? record.cwd.filter((segment): segment is string => typeof segment === 'string' && !!segment && segment !== '.' && segment !== '..' && !segment.includes('/'))
     : [];
   const fs = { root, cwd };
-  return getNodeAtPath(fs, cwd)?.type === 'directory' ? fs : { root, cwd: [] };
+  const children = root.children!;
+  children.home ??= { type: 'directory', children: {} };
+  const home = children.home;
+  if (home.type === 'directory') {
+    home.children ??= {};
+    home.children[terminalUser] ??= { type: 'directory', children: {} };
+    const target = home.children[terminalUser];
+    const legacyPaths = [['home', 'user'], ['user']];
+    for (const legacyPath of legacyPaths) {
+      const legacy = getNodeAtPath(fs, legacyPath);
+      if (legacy?.type !== 'directory' || target.type !== 'directory') continue;
+      // /home/user was the default. A root /user needs evidence it was a home.
+      if (legacyPath.length === 1 && cwd[0] !== 'user' && legacy.children?.['welcome.txt']?.content !== 'Welcome to the filesystem!') continue;
+      const conflicts: string[][] = [];
+      const merge = (source: FileSystemNode, destination: FileSystemNode, path: string[]) => {
+        destination.children ??= {};
+        for (const [name, node] of Object.entries(source.children ?? {})) {
+          const existing = destination.children[name];
+          if (!existing) destination.children[name] = node;
+          else if (node.type === 'directory' && existing.type === 'directory') merge(node, existing, [...path, name]);
+          else conflicts.push([...path, name]);
+        }
+      };
+      merge(legacy, target, []);
+      const insideLegacy = legacyPath.every((segment, index) => cwd[index] === segment);
+      const suffix = cwd.slice(legacyPath.length);
+      if (insideLegacy && !conflicts.some(path => path.every((segment, index) => suffix[index] === segment))) {
+        fs.cwd = [...homeSegments, ...suffix];
+      }
+      // Retain the old branch on collision, so neither version of a file is lost.
+      if (!conflicts.length) delete getNodeAtPath(fs, legacyPath.slice(0, -1))!.children![legacyPath.at(-1)!];
+    }
+  }
+  return getNodeAtPath(fs, fs.cwd)?.type === 'directory' ? fs : {
+    root, cwd: getNodeAtPath(fs, homeSegments)?.type === 'directory' ? [...homeSegments] : [],
+  };
+};
+
+export const migrateSavedPath = (fs: FileSystem, path: string, original: FileSystem): string => {
+  for (const prefix of ['/home/user', '/user']) {
+    if (path !== prefix && !path.startsWith(prefix + '/')) continue;
+    const oldHome = prefix.split('/').filter(Boolean);
+    if (original.root && getNodeAtPath(original, oldHome)?.type === 'directory' && !getNodeAtPath(fs, oldHome)
+      && getNodeAtPath(fs, homeSegments)?.type === 'directory') return '/' + homeSegments.join('/') + path.slice(prefix.length);
+  }
+  return path;
 };
 
 const fileSystemStorage: {
@@ -97,7 +143,12 @@ const fileSystemStorage: {
   return {
     getItem(key, initialValue) {
       try {
-        return normalizeFileSystem(storage.getItem(key, initialValue));
+        const saved = storage.getItem(key, initialValue);
+        const normalized = normalizeFileSystem(saved);
+        if (JSON.stringify(saved) !== JSON.stringify(normalized)) {
+          try { storage.setItem(key, normalized); } catch { /* Keep readable data when storage is full or read-only. */ }
+        }
+        return normalized;
       } catch {
         return initialValue;
       }
@@ -136,7 +187,7 @@ const getFileEmoji = (mimetype: string): string => {
   return '📁';
 };
 
-const getNodeAtPath = (fs: FileSystem, path: string[]): FileSystemNode | null => {
+function getNodeAtPath(fs: FileSystem, path: string[]): FileSystemNode | null {
   let current = fs.root;
   for (const segment of path) {
     if (current.type !== 'directory' || !current.children?.[segment]) {
@@ -145,9 +196,10 @@ const getNodeAtPath = (fs: FileSystem, path: string[]): FileSystemNode | null =>
     current = current.children[segment];
   }
   return current;
-};
+}
 
 const resolvePath = (fs: FileSystem, path: string): string[] => {
+  if (path === '~' || path.startsWith('~/')) path = '/' + homeSegments.join('/') + path.slice(1);
   const segments = path.split('/').filter(Boolean);
   const resolvedPath = path.startsWith('/') ? [] : [...fs.cwd];
 
@@ -204,7 +256,7 @@ export const getFileAsBlob = (fs: FileSystem, path: string): Blob => {
 };
 
 // Filesystem commands
-export const cd = (fs: FileSystem, path: string): FileSystem => {
+export const cd = (fs: FileSystem, path = '~'): FileSystem => {
   const resolvedPath = resolvePath(fs, path);
 
   const node = getNodeAtPath(fs, resolvedPath);

@@ -6,6 +6,8 @@ import Clear from "./clear";
 import Fs from "./fs";
 import Projects from "./projects";
 import Contact from "./contact";
+import Blog from "./blog";
+import History from "./history";
 import { type FileSystem } from '../utils/filesystem';
 
 export type CommandParams = {
@@ -24,6 +26,8 @@ export const componentMap = {
   clear: Clear,
   projects: Projects,
   contact: Contact,
+  blog: Blog,
+  history: History,
   cat: Fs.cat,
   cd: Fs.cd,
   mkdir: Fs.mkdir,
@@ -33,6 +37,7 @@ export const componentMap = {
   ls: Fs.ls,
   cp: Fs.cp,
   cwd: Fs.cwd,
+  pwd: Fs.cwd,
 };
 
 export type Commands = keyof typeof componentMap;
