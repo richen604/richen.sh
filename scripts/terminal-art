@@ -1,0 +1,8 @@
+#!/usr/bin/env sh
+set -eu
+repo=$(CDPATH= cd -- "$(dirname -- "$0")/.." && pwd)
+if [ ! -x "$repo/node_modules/.bin/tsx" ]; then
+  echo "Install repo dependencies first: pnpm install --frozen-lockfile" >&2
+  exit 1
+fi
+exec "$repo/node_modules/.bin/tsx" "$repo/scripts/generate-art.ts" "$@"
