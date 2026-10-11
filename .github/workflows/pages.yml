@@ -52,6 +52,9 @@ jobs:
           test -f dist/index.html
           test -f dist/projects/index.html
           test -f dist/contact/index.html
+          test -f dist/blog/index.html
+          test -f dist/ascii-rest-MIT.txt
+          test -f dist/art-grid-LICENSE.txt
           test -f dist/favicon.svg
           test -f dist/Gohu.ttf
           test -f dist/opengraph-image.png
