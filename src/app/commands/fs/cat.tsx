@@ -4,7 +4,7 @@ import { cat } from '../../utils/filesystem';
 
 const Cat: React.FC<CommandParams> = ({ args, filesystem }) => {
   if (!args || args.length === 0) {
-    return <div>Usage: cat &lt;file&gt;</div>;
+    return <div><span className="text-accent">Usage: cat</span> <span className="text-secondary">&lt;file&gt;</span></div>;
   }
 
   try {

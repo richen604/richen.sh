@@ -7,13 +7,13 @@ const Cp: React.FC<CommandParams> = ({ args, filesystem }) => {
 
   React.useEffect(() => {
     if (!args || args.length < 2) {
-      setResult(<div>Usage: cp &lt;source&gt; &lt;destination&gt;</div>);
+      setResult(<div><span className="text-accent">Usage: cp</span> <span className="text-secondary">&lt;source&gt; &lt;destination&gt;</span></div>);
       return;
     }
 
     try {
       cp(filesystem, args[0], args[1]);
-      setResult(<div>Copied {args[0]} to {args[1]}</div>);
+      setResult(<div><span className="text-accent">Copied</span> <span className="text-secondary">{args[0]}</span> to <span className="text-secondary">{args[1]}</span></div>);
     } catch (error) {
       setResult(<div>{(error as Error).message}</div>);
     }

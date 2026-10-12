@@ -12,10 +12,10 @@ const DisplayItem = React.memo(({ item }: { item: string }) => {
   try {
     value = JSON.parse(item) as DisplayItemValue;
   } catch {
-    return <div className="display-item p-2 text-gray-500">Unable to display saved terminal entry.</div>;
+    return <div className="display-item p-2 text-secondary">Unable to display saved terminal entry.</div>;
   }
   if (!value || typeof value !== "object" || typeof value.componentKey !== "string") {
-    return <div className="display-item p-2 text-gray-500">Unable to display saved terminal entry.</div>;
+    return <div className="display-item p-2 text-secondary">Unable to display saved terminal entry.</div>;
   }
   const { componentKey, props, timestamp } = value;
   const Component = Object.hasOwn(componentMap, componentKey)
@@ -31,7 +31,7 @@ const DisplayItem = React.memo(({ item }: { item: string }) => {
   return (
     <CommandEntry command={componentKey} timestamp={safeTimestamp} args={Array.isArray(safeProps?.args) ? safeProps.args.filter((arg): arg is string => typeof arg === "string") : []}>
       {unknownCommand && safeProps ? null : Component && safeProps ? <Component {...safeProps} timestamp={safeTimestamp} key={`${componentKey}-${safeTimestamp}`} /> : (
-        <div className="p-2 text-gray-500">Unable to display saved terminal entry.</div>
+        <div className="p-2 text-secondary">Unable to display saved terminal entry.</div>
       )}
     </CommandEntry>
   );

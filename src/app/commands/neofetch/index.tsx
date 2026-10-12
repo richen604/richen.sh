@@ -56,23 +56,23 @@ const Neofetch = ({ args }: CommandParams) => {
       </div>
       <div className="w-full md:w-2/3 text-sm">
         <div className="mb-1">
-          <div>Browser Name: {result.browser.name ?? "N/A"}</div>
-          <div>Browser Version: {result.browser.version ?? "N/A"}</div>
+          <div><span className="text-accent">Browser Name:</span> {result.browser.name ?? "N/A"}</div>
+          <div><span className="text-accent">Browser Version:</span> {result.browser.version ?? "N/A"}</div>
         </div>
-        <hr className="border-white w-full md:w-2/3 my-2" />
+        <hr className="border-border w-full md:w-2/3 my-2" />
         <div className="mb-1">
-          <div>OS Name: {result.os.name ?? "N/A"}</div>
-          <div>OS Version: {result.os.version ?? "N/A"}</div>
+          <div><span className="text-accent">OS Name:</span> {result.os.name ?? "N/A"}</div>
+          <div><span className="text-accent">OS Version:</span> {result.os.version ?? "N/A"}</div>
         </div>
-        <hr className="border-white w-full md:w-2/3 my-2" />
+        <hr className="border-border w-full md:w-2/3 my-2" />
         <div className="mb-1">
-          <div>CPU: {result.cpu.architecture ?? "N/A"}</div>
+          <div><span className="text-accent">CPU:</span> {result.cpu.architecture ?? "N/A"}</div>
         </div>
-        <hr className="border-white w-full md:w-2/3 my-2" />
+        <hr className="border-border w-full md:w-2/3 my-2" />
         <div className="mb-1">
-          <div>Device Model: {result.device.model ?? "N/A"}</div>
-          <div>Device Type: {result.device.type ?? "N/A"}</div>
-          <div>Device Vendor: {result.device.vendor ?? "N/A"}</div>
+          <div><span className="text-accent">Device Model:</span> {result.device.model ?? "N/A"}</div>
+          <div><span className="text-accent">Device Type:</span> {result.device.type ?? "N/A"}</div>
+          <div><span className="text-accent">Device Vendor:</span> {result.device.vendor ?? "N/A"}</div>
         </div>
       </div>
     </div>

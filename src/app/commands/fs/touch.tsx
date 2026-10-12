@@ -7,13 +7,13 @@ const Touch: React.FC<CommandParams> = ({ args, filesystem }) => {
 
   React.useEffect(() => {
     if (!args || args.length === 0) {
-      setResult(<div>Usage: touch &lt;file&gt;</div>);
+      setResult(<div><span className="text-accent">Usage: touch</span> <span className="text-secondary">&lt;file&gt;</span></div>);
       return;
     }
 
     try {
       touch(filesystem, args[0]);
-      setResult(<div>File created: {args[0]}</div>);
+      setResult(<div><span className="text-accent">File created:</span> <span className="text-accent">{args[0]}</span></div>);
     } catch (error) {
       setResult(<div>{(error as Error).message}</div>);
     }

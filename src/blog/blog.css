@@ -10,45 +10,44 @@
 body:has([data-blog-island])::before { content: "·"; font: 1px ArtGrid; position: fixed; opacity: 0; pointer-events: none; }
 
 .blog-content {
-  --blog-ink: #e7e3da;
-  --blog-muted: #aaa59a;
-  --blog-amber: #c8aa72;
   display: flow-root;
   max-width: 960px;
   padding: 1rem 1.25rem 5rem;
   font-family: var(--font-mono);
   font-size: 18px;
   line-height: 1.75;
-  color: var(--blog-ink);
+  color: var(--secondary);
   text-shadow: none;
   overflow-wrap: anywhere;
 }
 .blog-content > :not(figure, .aside-art, .art-inset, .art-coda), .blog-content header > * { max-width: 69ch; }
 .blog-content header { margin-bottom: 2.5rem; }
 .blog-content header > a { font-size: 16px; }
-.blog-content a { color: var(--blog-amber); text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: .25em; }
-.blog-content a:hover { color: var(--blog-ink); }
-.blog-content :focus-visible { outline: 2px solid var(--blog-amber); outline-offset: 4px; }
+.blog-content a { color: var(--info); text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: .25em; }
+.blog-content a:hover { color: var(--accent-hover); }
+.blog-content :focus-visible { outline: 2px solid var(--accent); outline-offset: 4px; }
+.blog-content :is(h1, h2, h3, h4, h5, h6) { color: var(--accent); }
 .blog-content h1 { max-width: 26ch; font-size: clamp(30px, 3.8vw, 44px); font-weight: 600; line-height: 1.18; text-wrap: balance; margin: 1.5rem 0 1.25rem; }
 .blog-content h2 { clear: both; font-size: 26px; font-weight: 600; line-height: 1.35; text-wrap: balance; margin: 3.5rem 0 1.25rem; }
 .blog-content h3 { font-size: 22px; line-height: 1.4; margin: 2rem 0 .75rem; }
 .blog-content p { margin: 1.125rem 0; }
 .blog-content time { display: block; font-size: 16px; font-variant-numeric: tabular-nums; }
-.blog-content time, .blog-content figcaption, .blog-content .post-description { color: var(--blog-muted); }
+.blog-content time { color: var(--secondary-accent); }
+.blog-content figcaption, .blog-content .post-description { color: var(--secondary); }
 .blog-content .post-description { margin-top: 1.5rem; line-height: 1.65; }
-.blog-content pre { overflow-x: auto; max-width: 100%; padding: 1rem; background: #181818; font-size: .9em; }
+.blog-content pre { overflow-x: auto; max-width: 100%; padding: 1rem; background: var(--surface); font-size: .9em; }
 .blog-content code { font-family: inherit; overflow-wrap: anywhere; }
 .blog-content pre code { overflow-wrap: normal; }
 .blog-content ul, .blog-content ol { padding-left: 1.5rem; list-style: revert; }
-.blog-content blockquote { margin: 1.5rem 0; padding-left: 1rem; border-left: 1px solid #888; }
+.blog-content blockquote { margin: 1.5rem 0; padding-left: 1rem; border-left: 1px solid var(--border); }
 .blog-content img { max-width: 100%; height: auto; }
 .blog-content figure { margin: 2.25rem 0; }
 .blog-content figure > svg { display: block; width: 100%; height: auto; }
 .blog-content figcaption { font-size: 16px; line-height: 1.6; margin-top: .75rem; }
 .blog-content table { width: 100%; border-collapse: collapse; font-variant-numeric: tabular-nums; }
-.blog-content caption { text-align: left; color: var(--blog-muted); margin-bottom: .5rem; }
-.blog-content th, .blog-content td { text-align: left; padding: .5rem; border-bottom: 1px solid #555; }
-.blog-content th { font-weight: 600; }
+.blog-content caption { text-align: left; color: var(--secondary); margin-bottom: .5rem; }
+.blog-content th, .blog-content td { text-align: left; padding: .5rem; border-bottom: 1px solid var(--border); }
+.blog-content th { font-weight: 600; color: var(--accent); }
 .blog-content .ascii-art { margin: 2.25rem 0; }
 .blog-content .ascii-art svg { display: block; width: 100%; height: auto; }
 .ascii-text-grid { container-type: inline-size; position: relative; width: 100%; aspect-ratio: var(--art-columns) / var(--art-rows); }
@@ -73,8 +72,8 @@ body:has([data-blog-island])::before { content: "·"; font: 1px ArtGrid; positio
 .blog-index .post-list { list-style: none; padding: 0; margin: 0; }
 .blog-index .post-list li + li { margin-top: 1rem; }
 .blog-index h2, .blog-index p { margin: 0; font-size: inherit; font-weight: inherit; }
-.blog-index time { color: #aaa59a; font-variant-numeric: tabular-nums; }
-.blog-index .post-command { display: block; color: #aaa59a; font-family: inherit; font-size: .875em; }
+.blog-index time { color: var(--secondary-accent); font-variant-numeric: tabular-nums; }
+.blog-index .post-command { display: block; color: var(--secondary); font-family: inherit; font-size: .875em; }
 .blog-index a { text-decoration: underline; text-underline-offset: .2em; }
 .blog-content .art-inset > .ascii-art { margin-left: auto; }
 .blog-content .art-coda > .ascii-art { width: 70% !important; margin-left: 8%; }
@@ -82,14 +81,15 @@ body:has([data-blog-island])::before { content: "·"; font: 1px ArtGrid; positio
 .blog-content .aside-art > .ascii-art { float: right; width: var(--aside-width) !important; margin: .5rem 0 1.5rem 2.25rem; }
 .blog-content .aside-art-left > .ascii-art { float: left; margin: .5rem 2.25rem 1.5rem 0; }
 .blog-content hr { border: 0; margin: 3.5rem 0 2rem; }
-.blog-content hr::before { content: "------"; color: var(--blog-muted); font-size: 18px; line-height: 1; }
-.blog-content .blog-credits { font-size: 16px; color: var(--blog-muted); }
+.blog-content hr::before { content: "------"; color: var(--muted); font-size: 18px; line-height: 1; }
+.blog-content .blog-credits { font-size: 16px; color: var(--secondary); }
 .blog-content .blog-credits h2 { font-size: 22px; }
-.blog-content ::selection { background: var(--blog-amber); color: #080808; }
 @media (max-width: 700px) {
   .blog-content { padding: .75rem .5rem 3rem; font-size: 16px; }
   .blog-content h2 { font-size: 23px; margin-top: 3rem; }
   .blog-content .aside-art > .ascii-art { float: none; width: 82% !important; margin: 1.75rem 0 1.75rem auto; }
   .blog-content .aside-art-left > .ascii-art { margin-left: 0; margin-right: auto; }
   .blog-content .art-coda > .ascii-art { width: 100% !important; margin-left: 0; }
+.blog-index h2 a { color: var(--accent); }
+.blog-index h2 a:hover { color: var(--accent-hover); }
 }

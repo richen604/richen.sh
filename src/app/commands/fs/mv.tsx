@@ -7,13 +7,13 @@ const Mv: React.FC<CommandParams> = ({ args, filesystem }) => {
 
   React.useEffect(() => {
     if (!args || args.length < 2) {
-      setResult(<div>Usage: mv &lt;source&gt; &lt;destination&gt;</div>);
+      setResult(<div><span className="text-accent">Usage: mv</span> <span className="text-secondary">&lt;source&gt; &lt;destination&gt;</span></div>);
       return;
     }
 
     try {
       mv(filesystem, args[0], args[1]);
-      setResult(<div>Moved {args[0]} to {args[1]}</div>);
+      setResult(<div><span className="text-accent">Moved</span> <span className="text-secondary">{args[0]}</span> to <span className="text-secondary">{args[1]}</span></div>);
     } catch (error) {
       setResult(<div>{(error as Error).message}</div>);
     }

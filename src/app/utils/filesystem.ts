@@ -268,19 +268,19 @@ export const cd = (fs: FileSystem, path = '~'): FileSystem => {
   throw new Error('Directory not found');
 };
 
-export const ls = (fs: FileSystem, path?: string): string => {
+export const ls = (fs: FileSystem, path?: string) => {
   const targetPath = path ? resolvePath(fs, path) : fs.cwd;
   const node = getNodeAtPath(fs, targetPath);
   if (node && node.type === 'directory') {
     const entries = Object.entries(node.children ?? {});
-    if (entries.length === 0) return '';
+    if (entries.length === 0) return [];
     const maxNameLength = Math.max(...entries.map(([name]) => name.length));
 
     return entries.map(([name, childNode]) => {
       const emoji = childNode.type === 'directory' ? '📁' : getFileEmoji(childNode.mimetype ?? 'application/octet-stream');
       const paddedName = name.padEnd(maxNameLength + 2);
-      return `${emoji} ${paddedName}`;
-    }).join('\n');
+      return { name, type: childNode.type, text: `${emoji} ${paddedName}` };
+    });
   }
   throw new Error('Directory not found');
 };

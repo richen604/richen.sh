@@ -36,7 +36,7 @@ const ExampleSelect = ({
 }) => {
   return (
     <select
-      className="w-auto dark:bg-gray-800 dark:text-white"
+      className="w-auto bg-surface text-foreground"
       onChange={onExampleChange}
       value={defaultExample}
       aria-label="Shader example"
@@ -161,8 +161,8 @@ const Shader: React.FC<CommandParams> = ({ args }) => {
           </div>
         )}
         {examples[example][1] && (
-          <div className="text-xs text-gray-500 m-2">
-            Credit:{" "}
+          <div className="text-xs text-muted m-2">
+            <span className="text-accent">Credit:</span>{" "}
             <a
               href={examples[example][1]}
               target="_blank"

@@ -7,13 +7,13 @@ const Rm: React.FC<CommandParams> = ({ args, filesystem }) => {
 
   React.useEffect(() => {
     if (!args || args.length === 0) {
-      setResult(<div>Usage: rm &lt;file_or_directory&gt;</div>);
+      setResult(<div><span className="text-accent">Usage: rm</span> <span className="text-secondary">&lt;file_or_directory&gt;</span></div>);
       return;
     }
 
     try {
       rm(filesystem, args[0]);
-      setResult(<div>Removed: {args[0]}</div>);
+      setResult(<div><span className="text-accent">Removed:</span> <span className="text-secondary">{args[0]}</span></div>);
     } catch (error) {
       setResult(<div>{(error as Error).message}</div>);
     }
