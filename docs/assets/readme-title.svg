@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="140" height="40" viewBox="0 0 140 40" role="img" aria-labelledby="title desc">
+  <title id="title">richen.sh</title>
+  <desc id="desc">Minimal richen.sh wordmark in the Grove palette.</desc>
+  <rect width="140" height="40" fill="#08110D" />
+  <text x="12" y="28" fill="#F2FFF5" font-family="monospace" font-size="24">richen<tspan fill="#C18B43">.sh</tspan></text>
+</svg>

@@ -1,9 +1,13 @@
-# richen.sh
+<h1>
+  <img src="./docs/assets/readme-title.svg" alt="richen.sh">
+  <br>
+  <img src="./docs/assets/readme-banner.png" alt="Mirrored dot-art landscape in autumn orange and forest green">
+</h1>
 
-![vite](https://img.shields.io/badge/vite-000000?style=flat&logo=vite&logoColor=ffffff&logoSize=auto)
-![typescript](https://img.shields.io/badge/typescript-000000?style=flat&logo=typescript&logoColor=ffffff&logoSize=auto)
-![tailwind](https://img.shields.io/badge/tailwind-000000?style=flat&logo=tailwindcss&logoColor=ffffff&logoSize=auto)
-![glsl](https://img.shields.io/badge/glsl-000000?style=flat&logo=opengl&logoColor=ffffff&logoSize=auto)
+![vite](https://img.shields.io/badge/vite-08110D?style=flat&logo=vite&logoColor=C18B43&logoSize=auto)
+![typescript](https://img.shields.io/badge/typescript-08110D?style=flat&logo=typescript&logoColor=8FB57F&logoSize=auto)
+![tailwind](https://img.shields.io/badge/tailwind-08110D?style=flat&logo=tailwindcss&logoColor=8FA76D&logoSize=auto)
+![glsl](https://img.shields.io/badge/glsl-08110D?style=flat&logo=opengl&logoColor=8FB57F&logoSize=auto)
 
 a terminal emulator in the browser with persistent filesystem and command system
 
