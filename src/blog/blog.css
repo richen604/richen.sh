@@ -49,22 +49,38 @@ body:has([data-blog-island])::before { content: "·"; font: 1px ArtGrid; positio
 .blog-content th, .blog-content td { text-align: left; padding: .5rem; border-bottom: 1px solid var(--border); }
 .blog-content th { font-weight: 600; color: var(--accent); }
 .blog-content .ascii-art { margin: 2.25rem 0; }
+.blog-content.homepage-banner { max-width: none; padding: 4px 0; }
+.homepage-banner .ascii-art { margin: 0 auto; }
 .blog-content .ascii-art svg { display: block; width: 100%; height: auto; }
 .ascii-text-grid { container-type: inline-size; position: relative; width: 100%; aspect-ratio: var(--art-columns) / var(--art-rows); }
+.ascii-text-grid canvas { display: block; position: absolute; inset: 0; width: 100%; height: 100%; visibility: hidden; }
+.ascii-canvas-ready canvas { visibility: visible; }
+.blog-content .ascii-canvas-ready pre { display: none; }
+/* Reserve geometry without painting monochrome art before enhancement.
+   Failed/blocked JS still gets readable artwork after a bounded wait. */
+@media (scripting: enabled) {
+  .blog-content .ascii-text-grid:not(.ascii-canvas-fallback) pre {
+    visibility: hidden;
+    animation: ascii-fallback 0s 3s forwards;
+  }
+}
+@keyframes ascii-fallback { to { visibility: visible; } }
 .blog-content .ascii-text-grid pre {
   width: max-content; max-width: none; padding: 0; margin: 0;
   position: absolute; top: 0; left: 0; transform-origin: top left;
   font-family: ArtGrid, ArtGridFallback, monospace;
   /* Only 0.02px for CSS layout quantisation, not a percentage frame. */
-  font-size: calc((100cqw - .02px) / var(--art-columns) / .60205078125);
+  font-size: calc((var(--art-display-width, 100cqw) - .02px) / var(--art-columns) / .60205078125);
   line-height: 1ch; font-weight: 400; letter-spacing: 0;
   font-variant-ligatures: none; white-space: pre; overflow-wrap: normal;
   user-select: text; text-shadow: none; overflow: visible;
 }
+.homepage-banner .ascii-text-grid { --art-display-width: min(100cqw, 1200px); height: 200px; aspect-ratio: auto; overflow: hidden; }
+.blog-content.homepage-banner .ascii-text-grid pre { top: 50%; left: max(0px, calc((100cqw - 1200px) / 2)); translate: 0 -50%; transform-origin: left center; }
 @supports (transform: scale(calc(1px / 1px))) {
   .blog-content .ascii-text-grid pre {
     font-size: 64px;
-    transform: scale(calc((100cqw - .02px) / (var(--art-columns) * 1ch)));
+    transform: scale(calc((var(--art-display-width, 100cqw) - .02px) / (var(--art-columns) * 1ch)));
   }
 }
 .blog-content li { margin: .75rem 0; }
@@ -75,6 +91,8 @@ body:has([data-blog-island])::before { content: "·"; font: 1px ArtGrid; positio
 .blog-index time { color: var(--secondary-accent); font-variant-numeric: tabular-nums; }
 .blog-index .post-command { display: block; color: var(--secondary); font-family: inherit; font-size: .875em; }
 .blog-index a { text-decoration: underline; text-underline-offset: .2em; }
+.blog-index h2 a { color: var(--accent); }
+.blog-index h2 a:hover { color: var(--accent-hover); }
 .blog-content .art-inset > .ascii-art { margin-left: auto; }
 .blog-content .art-coda > .ascii-art { width: 70% !important; margin-left: 8%; }
 .blog-content .aside-art { display: flow-root; }
@@ -85,11 +103,10 @@ body:has([data-blog-island])::before { content: "·"; font: 1px ArtGrid; positio
 .blog-content .blog-credits { font-size: 16px; color: var(--secondary); }
 .blog-content .blog-credits h2 { font-size: 22px; }
 @media (max-width: 700px) {
+  .homepage-banner .ascii-text-grid { height: 80px; }
   .blog-content { padding: .75rem .5rem 3rem; font-size: 16px; }
   .blog-content h2 { font-size: 23px; margin-top: 3rem; }
   .blog-content .aside-art > .ascii-art { float: none; width: 82% !important; margin: 1.75rem 0 1.75rem auto; }
   .blog-content .aside-art-left > .ascii-art { margin-left: 0; margin-right: auto; }
   .blog-content .art-coda > .ascii-art { width: 100% !important; margin-left: 0; }
-.blog-index h2 a { color: var(--accent); }
-.blog-index h2 a:hover { color: var(--accent-hover); }
 }

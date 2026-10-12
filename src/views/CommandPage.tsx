@@ -5,6 +5,8 @@ import TerminalLayout from "../app/components/TerminalLayout";
 import useCommands from "../app/hooks/useCommands";
 import { displayAtom, fileSystemAtom, store } from "../app/store";
 import { navigate } from "../blog/routes";
+import { SiteBanner } from "../blog/SiteBanner";
+import eightg518k from "../../content/assets/art/homepage/8g518k.art.json?prepared";
 
 /** Direct routes show only their requested output, without replacing saved history. */
 export default function CommandPage({ command, args = [], path }: {
@@ -24,6 +26,7 @@ export default function CommandPage({ command, args = [], path }: {
 
   return <TerminalLayout reading onKeyDown={handleKeyDown}
     onHelp={() => executeCommand("help")} onClear={() => executeCommand("clear")}>
+    {(command !== "blog" || !args.length) && <SiteBanner artifact={eightg518k} />}
     <CommandEntry command={command} args={args}>
       <Component {...params} pagePath={path} />
     </CommandEntry>

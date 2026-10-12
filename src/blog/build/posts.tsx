@@ -6,6 +6,7 @@ import * as runtime from "react/jsx-runtime";
 import { renderToStaticMarkup, renderToString } from "react-dom/server";
 import { BlogLayout, type PostMetadata } from "../BlogLayout.tsx";
 import { BlogContent } from "../BlogContent.tsx";
+import { SiteBanner } from "../SiteBanner.tsx";
 import { TerminalFrame } from "../../app/components/TerminalFrame.tsx";
 import { CommandEntry } from "../../app/components/CommandEntry.tsx";
 import { prepareText, pruneTextCache, type PreparedText } from "../art/prepared-text.ts";
@@ -109,8 +110,8 @@ export async function readPosts(root: string, lazy = false, importModule?: (url:
   return posts;
 }
 
-function renderDocument(post: Awaited<ReturnType<typeof readPosts>>[number] | undefined, slug: string | undefined, content: string, path: string, styles: string[], script: string, font?: string) {
-  const html = renderToString(<TerminalFrame activeTab="blog"><CommandEntry command="blog" args={slug ? [slug] : []}>
+function renderDocument(post: Awaited<ReturnType<typeof readPosts>>[number] | undefined, slug: string | undefined, content: string, path: string, styles: string[], script: string, font?: string, banner?: PreparedText) {
+  const html = renderToString(<TerminalFrame activeTab="blog">{banner && <SiteBanner artifact={banner} />}<CommandEntry command="blog" args={slug ? [slug] : []}>
     <div data-blog-island={slug ?? ""} dangerouslySetInnerHTML={{ __html: content }} />
   </CommandEntry></TerminalFrame>);
   return "<!doctype html>" + renderToStaticMarkup(<BlogLayout
@@ -120,11 +121,12 @@ function renderDocument(post: Awaited<ReturnType<typeof readPosts>>[number] | un
 
 export async function renderBlog(root: string, styles: string[], script = "/src/main.tsx", cached?: Awaited<ReturnType<typeof readPosts>>, font?: string) {
   const source = cached ?? await readPosts(root);
+  const banner = await prepareText(await readFile(join(root, "content/assets/art/homepage/8g518k.art.json"), "utf8"));
   const render = async (slug?: string) => {
     const post = source.find((entry) => entry.slug === slug);
     await post?.load();
     const content = renderToStaticMarkup(<BlogContent posts={source} slug={slug} post={post?.module} />);
-    return renderDocument(post, slug, content, slug ? `/blog/${slug}/` : "/blog/", styles, script, font);
+    return renderDocument(post, slug, content, slug ? `/blog/${slug}/` : "/blog/", styles, script, font, slug ? undefined : banner);
   };
   return { posts: await Promise.all(source.map(async (post) => ({ ...post, html: await render(post.slug) }))), index: await render() };
 }
@@ -135,7 +137,8 @@ export async function renderBlogPage(source: Awaited<ReturnType<typeof readPosts
   await post?.load();
   const path = slug ? `/blog/${slug}/` : "/blog/";
   const content = renderToStaticMarkup(<BlogContent posts={source} slug={slug} post={post?.module} />);
-  return renderDocument(post, slug, content, path, ["/src/blog/blog.css"], "/src/main.tsx", `/@fs${join(root, "docs/fonts/art-grid.woff2")}?no-inline`);
+  const banner = slug ? undefined : await prepareText(await readFile(join(root, "content/assets/art/homepage/8g518k.art.json"), "utf8"));
+  return renderDocument(post, slug, content, path, ["/src/blog/blog.css"], "/src/main.tsx", `/@fs${join(root, "docs/fonts/art-grid.woff2")}?no-inline`, banner);
 }
 
 export async function buildBlog(root = process.cwd()) {

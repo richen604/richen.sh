@@ -9,9 +9,10 @@ export interface PreparedText {
   width: number;
   height: number;
   background: string;
-  className: string;
-  css: string;
-  html: string;
+  rows: string[];
+  palette: string[];
+  /** One base64-alphabet character per palette index (not base64 bytes). */
+  colors: string;
 }
 
 const digest = (text: string) => createHash("sha256").update(text).digest("hex");
@@ -67,8 +68,6 @@ export async function prepareText(raw: string, cacheDirectory?: string, activeFi
   const hash = createHash("sha256").update(raw).update(Buffer.concat(implementation)).digest("hex");
   const file = cacheDirectory && join(cacheDirectory, `text-${hash}.json`);
   const artifactHash = digest(raw);
-  const className = `art-${hash.slice(0, 16)}`;
-  const css = artifact.palette.map((color, i) => `.${className} .c${i}{color:${color}}`).join("");
   if (file) activeFiles?.add(basename(file));
   if (file && cacheDirectory && await cacheExists(cacheDirectory)) {
     const stat = await lstat(file).catch((error: NodeJS.ErrnoException) => {
@@ -85,36 +84,26 @@ export async function prepareText(raw: string, cacheDirectory?: string, activeFi
       catch (error) { if (!(error instanceof SyntaxError)) throw error; }
       if (typeof envelope === "object" && envelope !== null) {
         const { version, artifactHash: source, payloadHash, prepared } = envelope as Record<string, unknown>;
-        if (version === 1 && source === artifactHash && typeof prepared === "object" && prepared !== null) {
+        if (version === 2 && source === artifactHash && typeof prepared === "object" && prepared !== null) {
           const payload = prepared as Record<string, unknown>;
           if (payload.width === artifact.width && payload.height === artifact.height &&
-              payload.background === artifact.background && payload.className === className &&
-              payload.css === css && typeof payload.html === "string" && payload.html.length > 0 &&
+              payload.background === artifact.background && Array.isArray(payload.rows) && Array.isArray(payload.palette) &&
+              typeof payload.colors === "string" && payload.colors.length === artifact.width * artifact.height &&
               payloadHash === digest(JSON.stringify(prepared))) return prepared as PreparedText;
         }
       }
     }
   }
-  const runs: { color: number; text: string }[] = [];
-  artifact.rows.forEach((row, y) => {
-    Array.from(row).forEach((glyph, x) => {
-      const color = artifact.colors[y * artifact.width + x];
-      const last = runs.at(-1);
-      if (last?.color === color) last.text += glyph;
-      else runs.push({ color, text: glyph });
-    });
-    if (y < artifact.height - 1) runs[runs.length - 1].text += "\n";
-  });
-  // Validation restricts glyphs to space/·/•/● and colours to hex. No HTML/CSS syntax.
+  const alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
   const result = {
-    width: artifact.width, height: artifact.height, background: artifact.background, className,
-    css,
-    html: runs.map(({ color, text }) => `<span class="c${color}">${text}</span>`).join(""),
+    width: artifact.width, height: artifact.height, background: artifact.background,
+    rows: artifact.rows, palette: artifact.palette,
+    colors: artifact.colors.map(index => alphabet[index]).join(""),
   };
   if (file && cacheDirectory) {
     await mkdir(cacheDirectory, { recursive: true });
     await cacheExists(cacheDirectory);
-    await writeAtomic(file, JSON.stringify({ version: 1, artifactHash, payloadHash: digest(JSON.stringify(result)), prepared: result }));
+    await writeAtomic(file, JSON.stringify({ version: 2, artifactHash, payloadHash: digest(JSON.stringify(result)), prepared: result }));
   }
   return result;
 }

@@ -171,7 +171,7 @@ export default function Navigation() {
   }, [path]);
 
   if (path.startsWith("/blog/")) return terminal ? <HomePage start={displayStart} limit={displayLength} /> : <DirectBlog key={path} path={path} />;
-  if (path === "/") return <HomePage start={displayStart} />;
+  if (path === "/") return <HomePage start={displayStart} compareArt />;
   const Page = routes[path]?.component ?? HomePage;
   return <Page />;
 }

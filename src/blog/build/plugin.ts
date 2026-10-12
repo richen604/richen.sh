@@ -1,10 +1,11 @@
 import { readFile } from "node:fs/promises";
-import { resolve } from "node:path";
+import { dirname, resolve } from "node:path";
 import type { Plugin, ViteDevServer } from "vite";
 import { brotliCompressSync, gzipSync, constants } from "node:zlib";
 import { renderBlogPage, readPosts } from "./posts.tsx";
 import { assetPath } from "./assets.ts";
 import { fileURLToPath } from "node:url";
+import { prepareText } from "../art/prepared-text.ts";
 
 export function blogPlugin(root = process.cwd()): Plugin {
   let devServer: ViteDevServer | undefined;
@@ -105,8 +106,17 @@ export function blogPlugin(root = process.cwd()): Plugin {
   };
   return {
     name: "native-mdx-blog",
-    resolveId(id) { if (id === "virtual:blog") return "\0virtual:blog"; },
+    enforce: "pre",
+    resolveId(id, importer) {
+      if (id === "virtual:blog") return "\0virtual:blog";
+      if (id.endsWith(".art.json?prepared") && importer) return `\0art:${resolve(dirname(importer), id.slice(0, -9))}.js`;
+    },
     async load(id) {
+      if (id.startsWith("\0art:")) {
+        const file = id.slice(5, -3);
+        this.addWatchFile(file);
+        return `export default ${JSON.stringify(await prepareText(await readFile(file, "utf8")))};`;
+      }
       if (id !== "\0virtual:blog") return;
       const entries = await posts();
       for (const post of entries) this.addWatchFile(post.file);

@@ -6,6 +6,8 @@ import TerminalLayout from "../app/components/TerminalLayout";
 import { CommandEntry } from "../app/components/CommandEntry";
 import useCommands from "../app/hooks/useCommands";
 import { displayAtom, type DisplayItem as DisplayItemValue } from "../app/store";
+import { SiteBanner } from "../blog/SiteBanner";
+import eightg518k from "../../content/assets/art/homepage/8g518k.art.json?prepared";
 
 const DisplayItem = React.memo(({ item }: { item: string }) => {
   let value: DisplayItemValue;
@@ -39,12 +41,13 @@ const DisplayItem = React.memo(({ item }: { item: string }) => {
 
 DisplayItem.displayName = "DisplayItem";
 
-export default function HomePage({ limit, start = 0 }: { limit?: number; start?: number }) {
+export default function HomePage({ limit, start = 0, compareArt = false }: { limit?: number; start?: number; compareArt?: boolean }) {
   const [display] = useAtom(displayAtom);
   const { handleKeyDown } = useCommands();
 
   return (
-    <TerminalLayout showCLI onKeyDown={handleKeyDown} outputKey={`${start}:${limit ?? ""}`}>
+    <TerminalLayout showCLI startAtTop={compareArt} onKeyDown={handleKeyDown} outputKey={`${start}:${limit ?? ""}`}>
+      {compareArt && <SiteBanner artifact={eightg518k} />}
       {display.slice(start, limit).map((item, index) => (
         <DisplayItem key={start + index} item={item} />
       ))}

@@ -1,4 +1,5 @@
 import { posts } from "virtual:blog";
+import { attachAsciiCanvases } from "./art/canvas";
 export { posts };
 
 type CachedPost = { html?: string; node?: HTMLElement };
@@ -207,7 +208,9 @@ export function attachPost(path: string, host: HTMLElement, prepared: HTMLElemen
   entry.node = host;
   remember(path, entry);
   if (detached === entry) detached = undefined;
+  const detachArt = attachAsciiCanvases(host);
   return () => {
+    detachArt();
     if (path !== "/blog/" && entry.node === host) retainDetached(entry);
   };
 }
