@@ -6,8 +6,7 @@ import { renderBlogPage, readPosts } from "./posts.tsx";
 import { assetPath } from "./assets.ts";
 import { fileURLToPath } from "node:url";
 
-export function blogPlugin(): Plugin {
-  let root = process.cwd();
+export function blogPlugin(root = process.cwd()): Plugin {
   let devServer: ViteDevServer | undefined;
   let source: ReturnType<typeof readPosts> | undefined;
   let generation = 0;
@@ -21,7 +20,6 @@ export function blogPlugin(): Plugin {
     return source;
   };
   const install = (server: ViteDevServer) => {
-    root = server.config.root;
     devServer = server;
     server.watcher.add([resolve(root, "content/blog"), resolve(root, "content/assets/art"), resolve(root, "src/blog")]);
     server.watcher.on("all", (_event, file) => {
@@ -74,7 +72,7 @@ export function blogPlugin(): Plugin {
         if (page === "/blog/" || post) {
           let pending = pages.get(page);
           if (!pending) {
-            pending = renderBlogPage(entries, post?.slug)
+            pending = renderBlogPage(entries, post?.slug, root)
               .then(html => server.transformIndexHtml(page, html))
               .then(html => ({ html, gzip: gzipSync(html), br: brotliCompressSync(html, { params: { [constants.BROTLI_PARAM_QUALITY]: 4 } }) }));
             if (revision === generation) pages.set(page, pending);
@@ -107,7 +105,6 @@ export function blogPlugin(): Plugin {
   };
   return {
     name: "native-mdx-blog",
-    configResolved(config) { root = config.root; },
     resolveId(id) { if (id === "virtual:blog") return "\0virtual:blog"; },
     async load(id) {
       if (id !== "\0virtual:blog") return;

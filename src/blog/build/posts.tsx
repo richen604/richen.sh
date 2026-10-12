@@ -130,18 +130,18 @@ export async function renderBlog(root: string, styles: string[], script = "/src/
 }
 
 /** Render just the requested route, not every other post/gallery. */
-export async function renderBlogPage(source: Awaited<ReturnType<typeof readPosts>>, slug?: string) {
+export async function renderBlogPage(source: Awaited<ReturnType<typeof readPosts>>, slug?: string, root = process.cwd()) {
   const post = source.find(entry => entry.slug === slug);
   await post?.load();
   const path = slug ? `/blog/${slug}/` : "/blog/";
   const content = renderToStaticMarkup(<BlogContent posts={source} slug={slug} post={post?.module} />);
-  return renderDocument(post, slug, content, path, ["/src/blog/blog.css"], "/src/main.tsx", "/docs/fonts/art-grid.woff2?no-inline");
+  return renderDocument(post, slug, content, path, ["/src/blog/blog.css"], "/src/main.tsx", `/@fs${join(root, "docs/fonts/art-grid.woff2")}?no-inline`);
 }
 
 export async function buildBlog(root = process.cwd()) {
   const output = join(root, "dist");
   const manifest = JSON.parse(await readFile(join(output, ".vite/manifest.json"), "utf8")) as Record<string, { src?: string; file: string; css?: string[]; imports?: string[] }>;
-  const entry = manifest["src/main.tsx"];
+  const entry = manifest["../src/main.tsx"];
   if (!entry) throw new Error("Terminal entry missing from Vite manifest");
   const styles = new Set<string>();
   const visit = (item: typeof entry) => { for (const css of item.css ?? []) styles.add(`/${css}`); for (const key of item.imports ?? []) visit(manifest[key]); };

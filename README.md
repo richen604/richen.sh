@@ -46,7 +46,7 @@ a terminal emulator in the browser with persistent filesystem and command system
 
 ## development
 
-the project is a vite multi-page app with routes at `/`, `/projects/`, and `/contact/`.
+the project is a vite multi-page app with HTML entries in `routes/` and public URLs at `/`, `/projects/`, `/contact/`, and `/blog/`.
 
 ```bash
 direnv allow

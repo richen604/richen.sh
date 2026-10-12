@@ -83,6 +83,12 @@ and font notices remain in `docs/licenses/` and `docs/fonts/` and ship with the 
 
 ## Terminal and deployment
 
+HTML entries live in `routes/`: `index.html`, `projects/index.html` and
+`contact/index.html`. Vite uses that directory as its root, serves repository
+`public/` at `/`, and builds into repository `dist/`. Source, fonts, authored
+`content/blog/` and shared artwork stay outside the route directory; development
+aliases and the blog watcher resolve them from the repository root.
+
 GitHub Pages publishes static `dist/` at `richen.sh`, including `/`,
 `/projects/`, `/contact/`, `/blog/` and `/blog/<slug>/`. Article content works
 without JavaScript. Root-relative URLs require domain-root hosting.
