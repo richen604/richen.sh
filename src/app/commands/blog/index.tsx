@@ -34,7 +34,7 @@ function BlogPost({ args = [], pagePath }: Pick<CommandParams, "args"> & { pageP
   }, [slug, pagePath, key]);
   const node = result.slug === key ? result.node : getPost(slug, pagePath);
   if (slug && !posts.some(post => post.slug === slug)) return <p className="p-2">Post not found: {slug}. Try <a href="/blog/">blog</a>.</p>;
-  if (result.slug === key && result.error) return <p className="p-2" role="alert">Unable to load post. <a href={pagePath ?? (slug ? `/blog/${slug}/` : "/blog/")}>Reload to retry.</a></p>;
+  if (result.slug === key && result.error) return <p className="p-2" role="alert">Unable to load post. <a data-reload href={pagePath ?? (slug ? `/blog/${slug}/` : "/blog/")}>Reload to retry.</a></p>;
   if (node === undefined) return <p className="p-2" role="status">Loading post…</p>;
   return <StaticIsland key={key} slug={slug} path={pagePath ?? (slug ? `/blog/${slug}/` : "/blog/")} node={node} />;
 }

@@ -28,7 +28,7 @@ export const handleCommand = ({
         timestamp,
       }),
     ]);
-    if (command === "blog") {
+    if (command === "blog" && args.length) {
       const path = blogPath(args);
       navigate(path ?? "/", true, store.get(displayAtom).length);
     } else if (window.location.pathname.startsWith("/blog/")) navigate("/", true);

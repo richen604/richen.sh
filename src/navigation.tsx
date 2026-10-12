@@ -134,10 +134,11 @@ export default function Navigation() {
       const destination = new URL(anchor.href, window.location.href);
       const destinationPath = routePath(destination.pathname);
       if (destination.origin !== window.location.origin || !destinationPath) return;
-      // Native navigation preserves fragments, query strings and browser history.
-      if (destination.hash || destination.search || (destination.pathname === window.location.pathname && !terminalHistoryEntry())) return;
+      // Native navigation preserves URL details and explicit error recovery.
+      if (destination.hash || destination.search || window.location.hash || window.location.search || anchor.hasAttribute("data-reload")) return;
 
       event.preventDefault();
+      if (destination.pathname === window.location.pathname && !terminalHistoryEntry()) return;
       navigate(destinationPath);
     };
 
