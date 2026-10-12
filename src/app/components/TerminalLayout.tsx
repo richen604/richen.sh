@@ -47,7 +47,9 @@ export default function TerminalLayout({ children, reading = false, outputKey, .
       for (const event of ["wheel", "touchstart", "pointerdown", "keydown"]) output.removeEventListener(event, stop);
     };
   }, [display, reading, props.showCLI, outputKey]);
-  return <TerminalFrame {...props} inputRef={inputRef} displayRef={displayRef} clock={clock}
+  const section = window.location.pathname.split("/")[1];
+  const activeTab = section === "blog" || section === "projects" || section === "contact" ? section : "terminal";
+  return <TerminalFrame activeTab={activeTab} {...props} inputRef={inputRef} displayRef={displayRef} clock={clock}
     onClick={props.onClick ?? (event => {
       if (!reading && props.showCLI !== false && window.matchMedia("(pointer: fine)").matches
         && !window.getSelection()?.toString()

@@ -82,6 +82,84 @@ body::after {
   caret-color: var(--accent);
 }
 
+.terminal-tabs {
+  display: flex;
+  flex-shrink: 0;
+  gap: 0.25rem;
+  margin-bottom: 0.5rem;
+  background: var(--background);
+  border-bottom: 1px solid color-mix(in srgb, var(--border) 40%, var(--background));
+}
+
+.terminal-tabs-pages,
+.terminal-tabs-actions {
+  display: flex;
+  gap: 0.125rem;
+}
+
+.terminal-tabs-actions {
+  margin-left: auto;
+}
+
+.terminal-tab {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 2rem;
+  padding: 0.25rem 0.75rem;
+  border: 1px solid transparent;
+  color: color-mix(in srgb, var(--accent) 70%, var(--muted));
+  white-space: nowrap;
+  cursor: pointer;
+}
+
+.terminal-tabs-actions .terminal-tab {
+  min-width: 2rem;
+}
+
+.terminal-tab:hover,
+.terminal-tab:focus-visible {
+  color: var(--accent-hover);
+  background: var(--surface-hover);
+}
+
+.terminal-tab:focus-visible {
+  outline-offset: -3px;
+}
+
+.terminal-tab:active {
+  background: var(--surface);
+}
+
+.terminal-tab[aria-current="page"] {
+  color: var(--warning);
+  background: var(--background);
+  border-color: color-mix(in srgb, var(--warning) 40%, var(--background));
+  border-bottom-color: var(--warning);
+}
+
+@media (max-width: 639px) {
+  .terminal-tab {
+    padding-inline: 0.25rem;
+  }
+}
+
+@media (pointer: coarse) {
+  .terminal-tab {
+    min-height: 2.75rem;
+  }
+}
+
+@media (max-width: 359px) {
+  .terminal-tabs {
+    gap: 0;
+  }
+
+  .terminal-tab {
+    padding-inline: 0.125rem;
+  }
+}
+
 a {
   color: var(--info);
 }

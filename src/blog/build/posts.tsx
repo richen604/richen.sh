@@ -110,7 +110,7 @@ export async function readPosts(root: string, lazy = false, importModule?: (url:
 }
 
 function renderDocument(post: Awaited<ReturnType<typeof readPosts>>[number] | undefined, slug: string | undefined, content: string, path: string, styles: string[], script: string, font?: string) {
-  const html = renderToString(<TerminalFrame><CommandEntry command="blog" args={slug ? [slug] : []}>
+  const html = renderToString(<TerminalFrame activeTab="blog"><CommandEntry command="blog" args={slug ? [slug] : []}>
     <div data-blog-island={slug ?? ""} dangerouslySetInnerHTML={{ __html: content }} />
   </CommandEntry></TerminalFrame>);
   return "<!doctype html>" + renderToStaticMarkup(<BlogLayout
