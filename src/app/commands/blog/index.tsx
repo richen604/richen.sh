@@ -1,17 +1,27 @@
 import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import type { CommandParams } from "..";
 import { attachPost, getPost, loadPost, posts, prefetchNewest } from "../../../blog/registry";
+import { PostList } from "../../../blog/PostList";
+
+function BlogIndex() {
+  useEffect(() => prefetchNewest(), []);
+  return <div data-blog-island=""><PostList posts={posts} /></div>;
+}
 
 function StaticIsland({ slug, path, node }: { slug: string; path: string; node: HTMLElement }) {
   const host = useRef<HTMLDivElement>(null);
   useLayoutEffect(() => attachPost(path, host.current!, node), [path, node]);
-  useEffect(() => slug ? undefined : prefetchNewest(), [slug]);
   // SSR children already exist; React must neither hydrate nor rewrite them.
   // The constant empty HTML claims no children on client-created shells.
   return <div ref={host} data-blog-island={slug} suppressHydrationWarning dangerouslySetInnerHTML={{ __html: "" }} />;
 }
 
 export default function Blog({ args = [], pagePath }: Pick<CommandParams, "args"> & { pagePath?: string }) {
+  if (!args[0]) return <BlogIndex />;
+  return <BlogPost args={args} pagePath={pagePath} />;
+}
+
+function BlogPost({ args = [], pagePath }: Pick<CommandParams, "args"> & { pagePath?: string }) {
   const slug = args[0] ?? "";
   const key = pagePath ?? slug;
   const [result, setResult] = useState(() => ({ slug: key, node: getPost(slug, pagePath), error: false }));
